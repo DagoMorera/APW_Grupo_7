@@ -1,0 +1,26 @@
+﻿@model SourceViewModel
+@{
+    ViewData["Title"] = "Eliminar Fuente";
+}
+
+<h2>Eliminar Fuente</h2>
+
+<div class="alert alert-warning">
+    ¿Estas seguro que deseas eliminar esta fuente?
+</div>
+
+<dl class="row">
+    <dt class="col-sm-2">Nombre</dt>
+    <dd class="col-sm-10">@Model.Name</dd>
+
+    <dt class="col-sm-2">Url</dt>
+    <dd class="col-sm-10">@Model.Url</dd>
+
+    <dt class="col-sm-2">Tipo</dt>
+    <dd class="col-sm-10">@Model.ComponentType</dd>
+</dl>
+
+<form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+    <button type="submit" class="btn btn-danger">Eliminar</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Cancelar</a>
+</form>Listo ya estan pegadas, sigamos con la prueba....

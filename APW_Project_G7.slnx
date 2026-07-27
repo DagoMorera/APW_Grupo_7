@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".gitignore.txt" />
+  </Folder>
+  <Project Path="APW_API/APW_API.csproj" />
+  <Project Path="APW_Architecture/APW_Architecture.csproj" Id="b329e553-feeb-413a-9c34-c41e72ca3a70" />
+  <Project Path="APW_Business/APW_Business.csproj" Id="bafc33e8-651d-4fc0-899f-c409c13e2333" />
+  <Project Path="APW_Data/APW_Data.csproj" Id="ca859b7d-205e-49c0-9b5d-c352bddf3676" />
+  <Project Path="APW_Models/APW_Models.csproj" Id="66e874e0-3f5e-4971-91a4-23a616590212" />
+  <Project Path="APW_Project_G7/APW_MVC.csproj" />
+  <Project Path="APW_Repositories/APW_Repositories.csproj" Id="651de43e-4db1-4035-8278-1906e9b6c989" />
+</Solution>

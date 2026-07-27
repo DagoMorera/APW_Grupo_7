@@ -1,0 +1,36 @@
+﻿@model IEnumerable<SourceViewModel>
+@{
+    ViewData["Title"] = "Fuentes";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Fuentes</h2>
+    <a asp-action="Create" class="btn btn-apw-primary">+ Agregar Fuente</a>
+</div>
+
+<table class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Url</th>
+            <th>Tipo</th>
+            <th>Requiere Secret</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var source in Model)
+        {
+            <tr>
+                <td>@source.Name</td>
+                <td>@source.Url</td>
+                <td>@source.ComponentType</td>
+                <td>@(source.RequiresSecret ? "Si" : "No")</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@source.Id" class="btn btn-sm btn-outline-secondary">Editar</a>
+                    <a asp-action="Delete" asp-route-id="@source.Id" class="btn btn-sm btn-outline-danger">Eliminar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

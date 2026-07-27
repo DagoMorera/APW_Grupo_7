@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\APW_Architecture\APW_Architecture.csproj" />
+    <ProjectReference Include="..\APW_Models\APW_Models.csproj" />
+    <ProjectReference Include="..\APW_Repositories\APW_Repositories.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,51 @@
+/* Estilos propios del proyecto APW, separados del site.css por defecto */
+
+:root {
+    --apw-primary: #1f4e8c;
+    --apw-primary-dark: #163a66;
+    --apw-accent: #f2a71b;
+    --apw-bg: #f7f8fa;
+}
+
+body {
+    background-color: var(--apw-bg);
+}
+
+/* Navbar */
+.apw-navbar {
+    background-color: var(--apw-primary);
+}
+
+    .apw-navbar .navbar-brand,
+    .apw-navbar .nav-link {
+        color: #ffffff;
+    }
+
+        .apw-navbar .nav-link:hover {
+            color: var(--apw-accent);
+        }
+
+    .apw-navbar .badge-role {
+        background-color: var(--apw-accent);
+        color: var(--apw-primary-dark);
+    }
+
+/* Botones principales */
+.btn-apw-primary {
+    background-color: var(--apw-primary);
+    color: #ffffff;
+    border: none;
+}
+
+    .btn-apw-primary:hover {
+        background-color: var(--apw-primary-dark);
+        color: #ffffff;
+    }
+
+/* Footer */
+.apw-footer {
+    background-color: var(--apw-primary-dark);
+    color: #ffffff;
+    padding: 1rem 0;
+    margin-top: 3rem;
+}

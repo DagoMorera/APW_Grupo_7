@@ -1,0 +1,44 @@
+﻿@model SourceViewModel
+@{
+    ViewData["Title"] = "Agregar Fuente";
+}
+
+<h2>Agregar Fuente</h2>
+
+<form asp-action="Create" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label">Nombre</label>
+        <input asp-for="Name" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Url" class="form-label">Url</label>
+        <input asp-for="Url" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label">Descripcion</label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ComponentType" class="form-label">Tipo (widget, api, feed)</label>
+        <input asp-for="ComponentType" class="form-control" />
+    </div>
+
+    <div class="form-check mb-3">
+        <input asp-for="RequiresSecret" class="form-check-input" />
+        <label asp-for="RequiresSecret" class="form-check-label">Requiere Secret</label>
+    </div>
+
+    <button type="submit" class="btn btn-apw-primary">Guardar</button>
+    <a asp-action="Index" class="btn btn-outline-secondary">Cancelar</a>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
