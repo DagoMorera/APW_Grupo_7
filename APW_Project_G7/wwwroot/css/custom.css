@@ -1,51 +1,197 @@
-/* Estilos propios del proyecto APW, separados del site.css por defecto */
+/* Tema oscuro APW - Pizarra y Teal */
 
 :root {
-    --apw-primary: #1f4e8c;
-    --apw-primary-dark: #163a66;
-    --apw-accent: #f2a71b;
-    --apw-bg: #f7f8fa;
+    --apw-bg: #0b1213;
+    --apw-bg-header: #0e1718;
+    --apw-surface: #131e1f;
+    --apw-surface-alt: #1c2b2c;
+    --apw-border: #1c2b2c;
+    --apw-border-strong: #2a3b3a;
+    --apw-text: #f2f2f0;
+    --apw-text-muted: #8fa3a1;
+    --apw-accent: #4fd1ae;
+    --apw-accent-dark: #0a2e24;
 }
 
 body {
     background-color: var(--apw-bg);
+    color: var(--apw-text);
 }
+
+a {
+    color: var(--apw-accent);
+}
+
+    a:hover {
+        color: #6fe0c2;
+    }
 
 /* Navbar */
 .apw-navbar {
-    background-color: var(--apw-primary);
+    background-color: var(--apw-bg-header) !important;
+    border-bottom: 1px solid var(--apw-border);
 }
 
-    .apw-navbar .navbar-brand,
+    .apw-navbar .navbar-brand {
+        color: var(--apw-accent) !important;
+        font-weight: 500;
+    }
+
     .apw-navbar .nav-link {
-        color: #ffffff;
+        color: var(--apw-text) !important;
     }
 
         .apw-navbar .nav-link:hover {
-            color: var(--apw-accent);
+            color: var(--apw-accent) !important;
         }
 
     .apw-navbar .badge-role {
         background-color: var(--apw-accent);
-        color: var(--apw-primary-dark);
+        color: var(--apw-accent-dark);
     }
 
 /* Botones principales */
 .btn-apw-primary {
-    background-color: var(--apw-primary);
-    color: #ffffff;
+    background-color: var(--apw-accent);
+    color: var(--apw-accent-dark);
     border: none;
+    font-weight: 500;
 }
 
     .btn-apw-primary:hover {
-        background-color: var(--apw-primary-dark);
-        color: #ffffff;
+        background-color: #6fe0c2;
+        color: var(--apw-accent-dark);
     }
+
+.btn-outline-secondary,
+.btn-outline-primary {
+    color: var(--apw-text);
+    border-color: var(--apw-border-strong);
+}
+
+    .btn-outline-secondary:hover,
+    .btn-outline-primary:hover {
+        background-color: var(--apw-surface-alt);
+        color: var(--apw-text);
+        border-color: var(--apw-border-strong);
+    }
+
+/* Tarjetas (cards) */
+.card {
+    background-color: var(--apw-surface);
+    border: 1px solid var(--apw-border);
+    color: var(--apw-text);
+}
+
+.card-title,
+.card-text {
+    color: var(--apw-text);
+}
+
+.text-muted {
+    color: var(--apw-text-muted) !important;
+}
+
+/* Feed principal */
+.apw-hero {
+    border-bottom: 3px solid var(--apw-accent);
+    padding-bottom: 1rem;
+}
+
+.apw-feed-card,
+.apw-source-card {
+    border: 1px solid var(--apw-border);
+    background-color: var(--apw-surface);
+    box-shadow: none;
+    transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+    .apw-feed-card:hover,
+    .apw-source-card:hover {
+        transform: translateY(-3px);
+        border-color: var(--apw-border-strong);
+    }
+
+.apw-feed-img {
+    height: 180px;
+    object-fit: cover;
+    background-color: var(--apw-surface-alt);
+}
+
+.apw-feed-description {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.badge.bg-secondary,
+.badge.bg-info {
+    background-color: var(--apw-surface-alt) !important;
+    color: var(--apw-accent) !important;
+}
+
+/* Formularios */
+.form-control,
+.form-select {
+    background-color: var(--apw-surface);
+    border-color: var(--apw-border-strong);
+    color: var(--apw-text);
+}
+
+    .form-control:focus,
+    .form-select:focus {
+        background-color: var(--apw-surface);
+        border-color: var(--apw-accent);
+        color: var(--apw-text);
+        box-shadow: 0 0 0 0.2rem rgba(79, 209, 174, 0.25);
+    }
+
+.form-label {
+    color: var(--apw-text);
+}
+
+/* Tablas */
+.table {
+    color: var(--apw-text);
+    border-color: var(--apw-border);
+}
+
+    .table > :not(caption) > * > * {
+        background-color: var(--apw-surface);
+        color: var(--apw-text);
+        border-bottom-color: var(--apw-border);
+    }
+
+.table-hover > tbody > tr:hover > * {
+    background-color: var(--apw-surface-alt);
+    color: var(--apw-text);
+}
 
 /* Footer */
 .apw-footer {
-    background-color: var(--apw-primary-dark);
-    color: #ffffff;
+    background-color: var(--apw-bg-header);
+    color: var(--apw-text-muted);
     padding: 1rem 0;
     margin-top: 3rem;
+    border-top: 1px solid var(--apw-border);
+}
+
+/* Alertas */
+.alert-info {
+    background-color: var(--apw-surface-alt);
+    border-color: var(--apw-border-strong);
+    color: var(--apw-text);
+}
+
+.alert-success {
+    background-color: #143026;
+    border-color: var(--apw-accent);
+    color: var(--apw-accent);
+}
+
+.alert-warning {
+    background-color: #3a2f14;
+    border-color: #a3852d;
+    color: #e8c66a;
 }

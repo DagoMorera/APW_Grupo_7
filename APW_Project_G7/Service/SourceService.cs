@@ -1,6 +1,6 @@
 ﻿using APW.Architecture.Providers;
 using APW.Mvc.Models;
-using APW.Architecture.Providers;
+
 namespace APW.Mvc.Service;
 
 public interface ISourceService
@@ -10,6 +10,7 @@ public interface ISourceService
     Task CreateSourceAsync(SourceViewModel source);
     Task UpdateSourceAsync(int id, SourceViewModel source);
     Task DeleteSourceAsync(int id);
+    Task<IEnumerable<ParsedSourceItemViewModel>> GetParsedItemsAsync(int sourceId);
 }
 
 // Consume el endpoint SourceApi para las operaciones de Source
@@ -52,5 +53,12 @@ public class SourceService : ISourceService
     public async Task DeleteSourceAsync(int id)
     {
         await _restProvider.DeleteAsync(_endpoint, id.ToString());
+    }
+
+    // Trae los items ya parseados (JSON/XML/HTML) de una Source especifica
+    public async Task<IEnumerable<ParsedSourceItemViewModel>> GetParsedItemsAsync(int sourceId)
+    {
+        var content = await _restProvider.GetAsync(_endpoint, $"{sourceId}/items");
+        return JsonProvider.DeserializeSimple<IEnumerable<ParsedSourceItemViewModel>>(content);
     }
 }

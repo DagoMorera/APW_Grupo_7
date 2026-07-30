@@ -16,9 +16,10 @@ public interface ISourceBusiness
 }
 
 // Logica de negocio de Sources
-public class SourceBusiness(ISourceRepository sourceRepository, IRestProvider restProvider) : ISourceBusiness
+public class SourceBusiness(ISourceRepository sourceRepository, ISettingRepository settingRepository, IRestProvider restProvider) : ISourceBusiness
 {
     private readonly ISourceRepository _sourceRepository = sourceRepository;
+    private readonly ISettingRepository _settingRepository = settingRepository;
     private readonly IRestProvider _restProvider = restProvider;
 
     public async Task<IEnumerable<Source>> ReadSourcesAsync()
@@ -52,7 +53,14 @@ public class SourceBusiness(ISourceRepository sourceRepository, IRestProvider re
         var source = await _sourceRepository.FindAsync(sourceId);
         if (source is null) return Enumerable.Empty<ParsedSourceItem>();
 
-        var rawContent = await _restProvider.GetAsync(source.Url, null);
+        string? apiKey = null;
+        if (source.RequiresSecret)
+        {
+            var settings = await _settingRepository.ReadAsync();
+            apiKey = settings.FirstOrDefault(s => s.SourceId == sourceId && s.KeyName == "ApiKey")?.KeyValue;
+        }
+
+        var rawContent = await _restProvider.GetAsync(source.Url, null, "X-Api-Key", apiKey);
         var parser = ContentParserFactory.Create(source.ComponentType);
 
         return parser.Parse(rawContent);

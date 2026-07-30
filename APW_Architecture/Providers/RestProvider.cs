@@ -1,6 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using APW.Architecture.Extensions;
 using APW.Architecture.Helpers;
+using System;
+using System.Threading.Tasks;
 
 namespace APW.Architecture.Providers
 {
@@ -17,21 +18,20 @@ namespace APW.Architecture.Providers
 		/// <returns>A task that represents the asynchronous operation, containing the response as a string.</returns>
 		Task<string> DeleteAsync(string endpoint, string id);
 
-		/// <summary>
-		/// Retrieves a resource asynchronously.
-		/// </summary>
-		/// <param name="endpoint">The endpoint for the GET request.</param>
-		/// <param name="id">The ID of the resource to retrieve. Can be null if not applicable.</param>
-		/// <returns>A task that represents the asynchronous operation, containing the response as a string.</returns>
-		Task<string> GetAsync(string endpoint, string? id);
-
-		/// <summary>
-		/// Creates a resource asynchronously.
-		/// </summary>
-		/// <param name="endpoint">The endpoint for the POST request.</param>
-		/// <param name="content">The content to send in the request body.</param>
-		/// <returns>A task that represents the asynchronous operation, containing the response as a string.</returns>
-		Task<string> PostAsync(string endpoint, string content);
+        /// <summary>
+        /// Retrieves a resource asynchronously.
+        /// </summary>
+        /// <param name="endpoint">The endpoint for the GET request.</param>
+        /// <param name="id">The ID of the resource to retrieve. Can be null if not applicable.</param>
+        /// <returns>A task that represents the asynchronous operation, containing the response as a string.</returns>
+        Task<string> GetAsync(string endpoint, string? id, string? headerName = null, string? headerValue = null);
+        /// <summary>
+        /// Creates a resource asynchronously.
+        /// </summary>
+        /// <param name="endpoint">The endpoint for the POST request.</param>
+        /// <param name="content">The content to send in the request body.</param>
+        /// <returns>A task that represents the asynchronous operation, containing the response as a string.</returns>
+        Task<string> PostAsync(string endpoint, string content);
 
 		/// <summary>
 		/// Updates a resource asynchronously.
@@ -48,18 +48,22 @@ namespace APW.Architecture.Providers
 	/// </summary>
 	public class RestProvider : IRestProvider
 	{
-		/// <summary>
-		/// Retrieves a resource asynchronously.
-		/// </summary>
-		/// <param name="endpoint">The endpoint for the GET request.</param>
-		/// <param name="id">The ID of the resource to retrieve. Can be null if not applicable.</param>
-		/// <returns>A task that represents the asynchronous operation, containing the response as a string.</returns>
-		public async Task<string> GetAsync(string endpoint, string? id)
-		{
+        /// <summary>
+        /// Retrieves a resource asynchronously.
+        /// </summary>
+        /// <param name="endpoint">The endpoint for the GET request.</param>
+        /// <param name="id">The ID of the resource to retrieve. Can be null if not applicable.</param>
+        /// <returns>A task that represents the asynchronous operation, containing the response as a string.</returns>
+        public async Task<string> GetAsync(string endpoint, string? id, string? headerName = null, string? headerValue = null)
+        {
 			try
 			{
 				using var client = RestProviderHelpers.CreateHttpClient(endpoint);
-				var requestUri = string.IsNullOrEmpty(id) ? string.Empty : id;
+                if (!string.IsNullOrEmpty(headerName) && !string.IsNullOrEmpty(headerValue))
+                {
+                    client.AddDefaultRequestHeader(headerName, headerValue);
+                }
+                var requestUri = string.IsNullOrEmpty(id) ? string.Empty : id;
 				// Determine the actual URI we will request.
 				// If no id was provided and the endpoint is an absolute URI to a resource
 				// (for example: https://.../tdc.json), call GetAsync with the full

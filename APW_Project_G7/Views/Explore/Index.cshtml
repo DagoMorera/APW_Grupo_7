@@ -1,0 +1,32 @@
+﻿@model IEnumerable<SourceViewModel>
+@{
+    ViewData["Title"] = "Explorar Fuentes";
+}
+
+<div class="apw-hero mb-4">
+    <h1 class="display-6 fw-bold">Explorar Fuentes</h1>
+    <p class="text-muted">Descubre el contenido disponible en cada fuente configurada</p>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">No hay fuentes configuradas todavia.</div>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @foreach (var source in Model)
+        {
+            <div class="col">
+                <div class="card h-100 apw-source-card">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">@source.Name</h5>
+                        <span class="badge bg-info text-dark align-self-start mb-2">@source.ComponentType</span>
+                        <p class="card-text text-muted">@source.Description</p>
+                        <a asp-action="Details" asp-route-id="@source.Id" class="btn btn-apw-primary mt-auto">Explorar</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

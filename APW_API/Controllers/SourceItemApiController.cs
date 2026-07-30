@@ -81,7 +81,8 @@ public class SourceItemApiController : ControllerBase
         {
             Id = item.Id,
             SourceId = item.SourceId,
-            Json = item.Json
+            Json = item.Json,
+            CreatedAt = item.CreatedAt
         };
     }
 }

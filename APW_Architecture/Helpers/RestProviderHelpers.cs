@@ -19,6 +19,7 @@ internal static class RestProviderHelpers
         var client = new HttpClient { BaseAddress = new Uri(normalizedEndpoint) };
         client.DefaultRequestHeaders.Accept.Clear();
         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        client.DefaultRequestHeaders.UserAgent.ParseAdd("APW_Project_G7/1.0");
         return client;
     }
 
