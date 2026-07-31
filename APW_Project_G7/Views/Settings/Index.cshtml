@@ -1,0 +1,91 @@
+﻿@model SettingsPageViewModel
+@{
+    ViewData["Title"] = "Configuracion";
+}
+
+<div class="apw-hero mb-4">
+    <h1 class="display-6">Configuracion</h1>
+    <p class="text-muted">Asignacion de roles y gestion de secrets del sistema</p>
+</div>
+
+@if (TempData["Mensaje"] is not null)
+{
+    <div class="alert alert-success">@TempData["Mensaje"]</div>
+}
+
+<!-- Seccion: Usuarios y Roles -->
+<div class="apw-settings-section mb-5">
+    <h3 class="mb-3">Usuarios y Roles</h3>
+
+    <div class="apw-source-list">
+        @foreach (var user in Model.Users)
+        {
+            <div class="apw-source-row">
+                <div class="apw-source-main">
+                    <div class="apw-source-name">@user.Username</div>
+                    <div class="apw-source-url">@user.Email</div>
+                </div>
+                <form asp-action="UpdateRole" method="post" class="d-flex gap-2 align-items-center">
+                    <input type="hidden" name="userId" value="@user.Id" />
+                    <select name="roleId" class="form-select form-select-sm apw-role-select">
+                        @foreach (var role in Model.Roles)
+                        {
+                            <option value="@role.Id" selected="@(role.Id == user.RoleId)">@role.Name</option>
+                        }
+                    </select>
+                    <button type="submit" class="btn btn-sm btn-apw-primary">Guardar</button>
+                </form>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Seccion: Secrets -->
+<div class="apw-settings-section">
+    <h3 class="mb-3">Secrets</h3>
+
+    <div class="apw-source-list mb-4">
+        @if (!Model.Secrets.Any())
+        {
+            <div class="alert alert-info">No hay secrets configurados todavia.</div>
+        }
+        @foreach (var secret in Model.Secrets)
+        {
+            <div class="apw-source-row">
+                <div class="apw-source-main">
+                    <div class="apw-source-name">@secret.KeyName</div>
+                    <div class="apw-source-url">@secret.SourceName &middot; @secret.KeyValue.Substring(0, Math.Min(8, secret.KeyValue.Length))****</div>
+                </div>
+                <form asp-action="DeleteSecret" method="post">
+                    <input type="hidden" name="id" value="@secret.Id" />
+                    <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+                </form>
+            </div>
+        }
+    </div>
+
+    <div class="apw-import-card">
+        <h5 class="mb-3">Agregar Secret</h5>
+        <form asp-action="CreateSecret" method="post">
+            <div class="mb-3">
+                <label class="form-label">Fuente (opcional, dejar vacio para Global)</label>
+                <select name="sourceId" class="form-select">
+                    <option value="">-- Global --</option>
+                    @foreach (var source in Model.Sources)
+                    {
+                        <option value="@source.Id">@source.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Nombre de la Key</label>
+                <input type="text" name="keyName" class="form-control" placeholder="ApiKey" required />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Valor</label>
+                <input type="text" name="keyValue" class="form-control" required />
+            </div>
+            <button type="submit" class="btn btn-apw-primary w-100">Guardar Secret</button>
+        </form>
+    </div>
+</div>

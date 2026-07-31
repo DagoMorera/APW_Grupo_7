@@ -3,7 +3,7 @@
 }
 
 <div class="apw-hero mb-4">
-    <h1 class="display-6 fw-bold">Importar Item</h1>
+    <h1 class="display-6">Importar Item</h1>
     <p class="text-muted">Sube un archivo JSON exportado (de esta app o de otro grupo) para cargarlo en la base de datos</p>
 </div>
 
@@ -14,10 +14,40 @@
 
 <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-<form asp-action="Index" method="post" enctype="multipart/form-data" class="col-md-6">
-    <div class="mb-3">
-        <label class="form-label">Archivo JSON</label>
-        <input type="file" name="jsonFile" accept=".json" class="form-control" required />
-    </div>
-    <button type="submit" class="btn btn-apw-primary">Importar</button>
-</form>
+<div class="apw-import-card mx-auto">
+    <form asp-action="Index" method="post" enctype="multipart/form-data">
+        <label for="jsonFile" class="apw-dropzone" id="apwDropzone">
+            <div class="apw-dropzone-icon">&#128220;</div>
+            <div class="apw-dropzone-text">Arrastra tu archivo aqui, o haz clic para seleccionar</div>
+            <div class="apw-dropzone-filename" id="apwFileName">Ningun archivo seleccionado</div>
+            <input type="file" id="jsonFile" name="jsonFile" accept=".json" class="apw-dropzone-input" required />
+        </label>
+        <button type="submit" class="btn btn-apw-primary w-100 mt-3">Importar</button>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        const input = document.getElementById('jsonFile');
+        const fileName = document.getElementById('apwFileName');
+        const dropzone = document.getElementById('apwDropzone');
+
+        input.addEventListener('change', () => {
+            fileName.textContent = input.files.length > 0 ? input.files[0].name : 'Ningun archivo seleccionado';
+        });
+
+        ['dragover', 'dragleave', 'drop'].forEach(evt => {
+            dropzone.addEventListener(evt, e => e.preventDefault());
+        });
+
+        dropzone.addEventListener('dragover', () => dropzone.classList.add('apw-dropzone-active'));
+        dropzone.addEventListener('dragleave', () => dropzone.classList.remove('apw-dropzone-active'));
+        dropzone.addEventListener('drop', (e) => {
+            dropzone.classList.remove('apw-dropzone-active');
+            if (e.dataTransfer.files.length > 0) {
+                input.files = e.dataTransfer.files;
+                fileName.textContent = e.dataTransfer.files[0].name;
+            }
+        });
+    </script>
+}

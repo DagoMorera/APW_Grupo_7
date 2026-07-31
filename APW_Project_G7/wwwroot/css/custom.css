@@ -1,4 +1,4 @@
-/* Tema oscuro APW - Pizarra y Teal */
+/* Tema oscuro APW - Pizarra y Teal, estilo GoT */
 
 :root {
     --apw-bg: #0b1213;
@@ -13,9 +13,40 @@
     --apw-accent-dark: #0a2e24;
 }
 
-body {
+/* Tipografia global */
+body, .form-control, .btn, .navbar {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 1.05rem;
+}
+
+h1, h2, h3, h4, h5, h6,
+.apw-brand, .card-title {
+    font-family: 'Cinzel', serif;
+    letter-spacing: 0.5px;
+}
+
+/* Sticky footer: el body ocupa toda la pantalla, el main crece para empujar el footer abajo */
+html, body {
+    height: 100%;
+}
+
+.apw-body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
     background-color: var(--apw-bg);
     color: var(--apw-text);
+}
+
+.apw-page-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    width: 100%;
+}
+
+.apw-main {
+    flex: 1 0 auto;
 }
 
 a {
@@ -29,33 +60,72 @@ a {
 /* Navbar */
 .apw-navbar {
     background-color: var(--apw-bg-header) !important;
-    border-bottom: 1px solid var(--apw-border);
+    border-bottom: 2px solid var(--apw-accent);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
 }
 
-    .apw-navbar .navbar-brand {
+.apw-brand {
+    color: var(--apw-accent) !important;
+    font-weight: 600;
+    font-size: 1.4rem;
+}
+
+.apw-brand-mark {
+    color: var(--apw-accent);
+    margin-right: 4px;
+}
+
+.apw-navbar .nav-link {
+    color: var(--apw-text) !important;
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding-left: 0.9rem !important;
+    padding-right: 0.9rem !important;
+    position: relative;
+}
+
+    .apw-navbar .nav-link:hover {
         color: var(--apw-accent) !important;
-        font-weight: 500;
     }
 
-    .apw-navbar .nav-link {
-        color: var(--apw-text) !important;
-    }
-
-        .apw-navbar .nav-link:hover {
-            color: var(--apw-accent) !important;
-        }
-
-    .apw-navbar .badge-role {
+    .apw-navbar .nav-link::after {
+        content: "";
+        position: absolute;
+        left: 0.9rem;
+        right: 0.9rem;
+        bottom: 2px;
+        height: 1px;
         background-color: var(--apw-accent);
-        color: var(--apw-accent-dark);
+        transform: scaleX(0);
+        transition: transform 0.15s ease;
     }
 
-/* Botones principales */
+    .apw-navbar .nav-link:hover::after {
+        transform: scaleX(1);
+    }
+
+.apw-username {
+    color: var(--apw-text);
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+}
+
+.badge-role {
+    background-color: var(--apw-accent);
+    color: var(--apw-accent-dark);
+}
+
+/* Botones */
 .btn-apw-primary {
     background-color: var(--apw-accent);
     color: var(--apw-accent-dark);
     border: none;
-    font-weight: 500;
+    font-weight: 600;
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
 }
 
     .btn-apw-primary:hover {
@@ -63,8 +133,23 @@ a {
         color: var(--apw-accent-dark);
     }
 
+.btn-apw-outline {
+    background-color: transparent;
+    color: var(--apw-text);
+    border: 1px solid var(--apw-border-strong);
+    font-family: 'Cinzel', serif;
+    font-size: 0.8rem;
+}
+
+    .btn-apw-outline:hover {
+        background-color: var(--apw-surface-alt);
+        color: var(--apw-accent);
+        border-color: var(--apw-accent);
+    }
+
 .btn-outline-secondary,
-.btn-outline-primary {
+.btn-outline-primary,
+.btn-outline-danger {
     color: var(--apw-text);
     border-color: var(--apw-border-strong);
 }
@@ -76,7 +161,7 @@ a {
         border-color: var(--apw-border-strong);
     }
 
-/* Tarjetas (cards) */
+/* Tarjetas (cards) genericas */
 .card {
     background-color: var(--apw-surface);
     border: 1px solid var(--apw-border);
@@ -98,16 +183,14 @@ a {
     padding-bottom: 1rem;
 }
 
-.apw-feed-card,
-.apw-source-card {
+.apw-feed-card {
     border: 1px solid var(--apw-border);
     background-color: var(--apw-surface);
     box-shadow: none;
     transition: transform 0.15s ease, border-color 0.15s ease;
 }
 
-    .apw-feed-card:hover,
-    .apw-source-card:hover {
+    .apw-feed-card:hover {
         transform: translateY(-3px);
         border-color: var(--apw-border-strong);
     }
@@ -123,6 +206,7 @@ a {
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    font-family: 'EB Garamond', serif;
 }
 
 .badge.bg-secondary,
@@ -149,6 +233,9 @@ a {
 
 .form-label {
     color: var(--apw-text);
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
 }
 
 /* Tablas */
@@ -172,9 +259,12 @@ a {
 .apw-footer {
     background-color: var(--apw-bg-header);
     color: var(--apw-text-muted);
-    padding: 1rem 0;
-    margin-top: 3rem;
-    border-top: 1px solid var(--apw-border);
+    padding: 1.25rem 0;
+    border-top: 2px solid var(--apw-accent);
+    font-family: 'Cinzel', serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
 }
 
 /* Alertas */
@@ -194,4 +284,191 @@ a {
     background-color: #3a2f14;
     border-color: #a3852d;
     color: #e8c66a;
+}
+/* Lista de Fuentes - estilo registro */
+.apw-source-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.apw-source-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background-color: var(--apw-surface);
+    border: 1px solid var(--apw-border);
+    border-left: 3px solid var(--apw-accent);
+    border-radius: 6px;
+    padding: 14px 18px;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.apw-source-row:hover {
+    background-color: var(--apw-surface-alt);
+    border-left-color: #6fe0c2;
+}
+
+.apw-source-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.apw-source-name {
+    font-family: 'Cinzel', serif;
+    font-size: 1.05rem;
+    color: var(--apw-text);
+}
+
+.apw-lock-icon {
+    font-size: 0.8rem;
+    margin-left: 6px;
+    opacity: 0.8;
+}
+
+.apw-source-url {
+    font-size: 0.85rem;
+    color: var(--apw-text-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.apw-source-desc {
+    font-size: 0.85rem;
+    color: var(--apw-text-muted);
+    font-style: italic;
+    margin-top: 2px;
+}
+
+.apw-source-meta {
+    flex-shrink: 0;
+}
+
+.apw-source-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+/* Tarjetas de Explorar - estilo sello/blason */
+.apw-explore-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    background-color: var(--apw-surface);
+    border: 1px solid var(--apw-border);
+    border-radius: 10px;
+    padding: 28px 20px 20px;
+    position: relative;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+    .apw-explore-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(79, 209, 174, 0.15);
+    }
+
+.apw-explore-seal {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: var(--apw-surface-alt);
+    border: 1px solid var(--apw-accent);
+    color: var(--apw-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    margin-bottom: 14px;
+}
+
+.apw-explore-title {
+    color: var(--apw-text);
+    margin-bottom: 6px;
+}
+
+.apw-explore-type {
+    display: inline-block;
+    background-color: var(--apw-surface-alt);
+    color: var(--apw-accent);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 3px 10px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+}
+
+.apw-explore-desc {
+    color: var(--apw-text-muted);
+    font-size: 0.9rem;
+    flex: 1;
+    margin-bottom: 16px;
+}
+/* Importar - dropzone */
+.apw-import-card {
+    max-width: 520px;
+    background-color: var(--apw-surface);
+    border: 1px solid var(--apw-border);
+    border-radius: 10px;
+    padding: 24px;
+}
+
+.apw-dropzone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border: 2px dashed var(--apw-border-strong);
+    border-radius: 8px;
+    padding: 40px 20px;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+    position: relative;
+}
+
+    .apw-dropzone:hover,
+    .apw-dropzone-active {
+        border-color: var(--apw-accent);
+        background-color: var(--apw-surface-alt);
+    }
+
+.apw-dropzone-icon {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.apw-dropzone-text {
+    color: var(--apw-text);
+    font-size: 0.95rem;
+    margin-bottom: 10px;
+}
+
+.apw-dropzone-filename {
+    color: var(--apw-accent);
+    font-size: 0.85rem;
+    font-style: italic;
+}
+
+.apw-dropzone-input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    overflow: hidden;
+}
+/* Pagina de Configuracion */
+.apw-settings-section h3 {
+    border-left: 3px solid var(--apw-accent);
+    padding-left: 12px;
+}
+
+.apw-role-select {
+    background-color: var(--apw-surface-alt);
+    border-color: var(--apw-border-strong);
+    color: var(--apw-text);
+    max-width: 160px;
 }

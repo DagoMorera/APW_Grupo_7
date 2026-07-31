@@ -4,7 +4,7 @@
 }
 
 <div class="apw-hero mb-4">
-    <h1 class="display-6 fw-bold">Explorar Fuentes</h1>
+    <h1 class="display-6">Explorar Fuentes</h1>
     <p class="text-muted">Descubre el contenido disponible en cada fuente configurada</p>
 </div>
 
@@ -18,13 +18,12 @@ else
         @foreach (var source in Model)
         {
             <div class="col">
-                <div class="card h-100 apw-source-card">
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title">@source.Name</h5>
-                        <span class="badge bg-info text-dark align-self-start mb-2">@source.ComponentType</span>
-                        <p class="card-text text-muted">@source.Description</p>
-                        <a asp-action="Details" asp-route-id="@source.Id" class="btn btn-apw-primary mt-auto">Explorar</a>
-                    </div>
+                <div class="apw-explore-card">
+                    <div class="apw-explore-seal">&#9670;</div>
+                    <h5 class="apw-explore-title">@source.Name</h5>
+                    <span class="apw-explore-type">@source.ComponentType</span>
+                    <p class="apw-explore-desc">@source.Description</p>
+                    <a asp-action="Details" asp-route-id="@source.Id" class="btn btn-apw-primary w-100 mt-auto">Explorar</a>
                 </div>
             </div>
         }

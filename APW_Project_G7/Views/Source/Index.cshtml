@@ -3,34 +3,46 @@
     ViewData["Title"] = "Fuentes";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>Fuentes</h2>
+<div class="d-flex justify-content-between align-items-center mb-4 apw-hero">
+    <div>
+        <h2>Registro de Fuentes</h2>
+        <p class="text-muted mb-0">Las fuentes configuradas para la ingesta de contenido</p>
+    </div>
     <a asp-action="Create" class="btn btn-apw-primary">+ Agregar Fuente</a>
 </div>
 
-<table class="table table-striped table-hover">
-    <thead>
-        <tr>
-            <th>Nombre</th>
-            <th>Url</th>
-            <th>Tipo</th>
-            <th>Requiere Secret</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Aun no hay fuentes registradas.</div>
+}
+else
+{
+    <div class="apw-source-list">
         @foreach (var source in Model)
         {
-            <tr>
-                <td>@source.Name</td>
-                <td>@source.Url</td>
-                <td>@source.ComponentType</td>
-                <td>@(source.RequiresSecret ? "Si" : "No")</td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@source.Id" class="btn btn-sm btn-outline-secondary">Editar</a>
+            <div class="apw-source-row">
+                <div class="apw-source-main">
+                    <div class="apw-source-name">
+                        @source.Name
+                        @if (source.RequiresSecret)
+                        {
+                            <span class="apw-lock-icon" title="Requiere Secret">&#128274;</span>
+                        }
+                    </div>
+                    <div class="apw-source-url">@source.Url</div>
+                    @if (!string.IsNullOrWhiteSpace(source.Description))
+                    {
+                        <div class="apw-source-desc">@source.Description</div>
+                    }
+                </div>
+                <div class="apw-source-meta">
+                    <span class="badge bg-info text-dark">@source.ComponentType</span>
+                </div>
+                <div class="apw-source-actions">
+                    <a asp-action="Edit" asp-route-id="@source.Id" class="btn btn-sm btn-apw-outline">Editar</a>
                     <a asp-action="Delete" asp-route-id="@source.Id" class="btn btn-sm btn-outline-danger">Eliminar</a>
-                </td>
-            </tr>
+                </div>
+            </div>
         }
-    </tbody>
-</table>
+    </div>
+}
