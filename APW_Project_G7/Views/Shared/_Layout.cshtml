@@ -10,8 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=EB+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
-    <link rel="alternate" type="application/rss+xml" title="APW RSS" href="/Feed/Rss" />
-    <link rel="alternate" type="application/atom+xml" title="APW Atom" href="/Feed/Atom" />
+    <link rel="alternate" type="application/rss+xml" title="APW - Feed de contenido guardado" href="/feed.xml" />
 </head>
 <body class="apw-body">
     <div class="apw-page-wrapper">
@@ -79,6 +78,7 @@
         <footer class="apw-footer text-center">
             <div class="container">
                 &copy; @DateTime.Now.Year - APW_Project_G7
+                &middot; <a href="/feed.xml" class="apw-footer-link">RSS</a>
             </div>
         </footer>
     </div>
