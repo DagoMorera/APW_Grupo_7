@@ -31,9 +31,6 @@
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Explore" asp-action="Index">Explorar</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Feed" asp-action="Preview">Feed</a>
-                            </li>
                             @if (User.Identity != null && User.Identity.IsAuthenticated)
                             {
                                 <li class="nav-item">
@@ -87,7 +84,6 @@
         <footer class="apw-footer text-center">
             <div class="container">
                 &copy; @DateTime.Now.Year - APW_Project_G7
-                &middot; <a asp-controller="Feed" asp-action="Preview" class="apw-footer-link">RSS</a>
             </div>
         </footer>
     </div>
