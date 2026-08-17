@@ -34,6 +34,15 @@ public class UserApiController : ControllerBase
         return Ok(ToViewModel(user));
     }
 
+    // GET api/UserApi/by-token/3f2a9c1e-...
+    [HttpGet("by-token/{token:guid}")]
+    public async Task<ActionResult<UserViewModel>> GetByToken(Guid token)
+    {
+        var user = await _userBusiness.FindByTokenAsync(token);
+        if (user is null) return NotFound();
+        return Ok(ToViewModel(user));
+    }
+
     // POST api/UserApi
     [HttpPost]
     public async Task<ActionResult> Post(UserViewModel viewModel)
@@ -42,7 +51,7 @@ public class UserApiController : ControllerBase
         {
             Username = viewModel.Username,
             Email = viewModel.Email,
-            PasswordHash = viewModel.Password, // se hashea dentro de UserBusiness
+            PasswordHash = viewModel.Password,
             RoleId = viewModel.RoleId,
             IsActive = viewModel.IsActive,
             CreatedAt = DateTime.UtcNow
@@ -88,7 +97,8 @@ public class UserApiController : ControllerBase
             Username = user.Username,
             Email = user.Email,
             RoleId = user.RoleId,
-            IsActive = user.IsActive
+            IsActive = user.IsActive,
+            FeedToken = user.FeedToken
         };
     }
 }

@@ -10,10 +10,12 @@ namespace APW.Mvc.Controllers;
 public class SourceController : Controller
 {
     private readonly ISourceService _sourceService;
+    private readonly ISourceItemService _sourceItemService;
 
-    public SourceController(ISourceService sourceService)
+    public SourceController(ISourceService sourceService, ISourceItemService sourceItemService)
     {
         _sourceService = sourceService;
+        _sourceItemService = sourceItemService;
     }
 
     // GET /Source
@@ -64,6 +66,10 @@ public class SourceController : Controller
     {
         var source = await _sourceService.GetSourceByIdAsync(id);
         if (source is null) return NotFound();
+
+        var allItems = await _sourceItemService.GetSourceItemsAsync();
+        ViewBag.ItemCount = allItems.Count(i => i.SourceId == id);
+
         return View(source);
     }
 
@@ -73,6 +79,7 @@ public class SourceController : Controller
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
         await _sourceService.DeleteSourceAsync(id);
+        TempData["Mensaje"] = "Fuente eliminada correctamente";
         return RedirectToAction(nameof(Index));
     }
 }

@@ -1,6 +1,6 @@
 ﻿using APW.Architecture.Providers;
 using APW.Mvc.Models;
-using APW.Architecture.Providers;
+
 namespace APW.Mvc.Service;
 
 public interface IUserService
@@ -10,6 +10,7 @@ public interface IUserService
     Task CreateUserAsync(UserViewModel user);
     Task UpdateUserAsync(int id, UserViewModel user);
     Task DeleteUserAsync(int id);
+    Task<UserViewModel?> GetUserByTokenAsync(Guid token);
 }
 
 // Consume el endpoint UserApi para las operaciones de User
@@ -52,5 +53,19 @@ public class UserService : IUserService
     public async Task DeleteUserAsync(int id)
     {
         await _restProvider.DeleteAsync(_endpoint, id.ToString());
+    }
+
+    // Resuelve el usuario dueno de un FeedToken, para el feed personal publico
+    public async Task<UserViewModel?> GetUserByTokenAsync(Guid token)
+    {
+        try
+        {
+            var content = await _restProvider.GetAsync(_endpoint, $"by-token/{token}");
+            return JsonProvider.DeserializeSimple<UserViewModel>(content);
+        }
+        catch
+        {
+            return null;
+        }
     }
 }

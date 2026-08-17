@@ -1,8 +1,5 @@
 ﻿using APW.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Data;
-using System.Reflection.Emit;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace APW.Data.MSSQLEF;
 
@@ -18,6 +15,7 @@ public class ApwDbContext : DbContext
     public DbSet<Source> Sources { get; set; }
     public DbSet<SourceItem> SourceItems { get; set; }
     public DbSet<Setting> Settings { get; set; }
+    public DbSet<Subscription> Subscriptions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -43,7 +41,9 @@ public class ApwDbContext : DbContext
             entity.Property(e => e.CreatedBy).HasMaxLength(100);
             entity.Property(e => e.ModifiedBy).HasMaxLength(100);
 
-            // Relacion User -> Role
+            entity.Property(e => e.FeedToken).IsRequired();
+            entity.HasIndex(e => e.FeedToken).IsUnique();
+
             entity.HasOne(e => e.Role)
                 .WithMany(r => r.Users)
                 .HasForeignKey(e => e.RoleId);
@@ -70,10 +70,11 @@ public class ApwDbContext : DbContext
             entity.Property(e => e.Json).IsRequired();
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("GETDATE()");
 
-            // Relacion SourceItem -> Source
+            // Al borrar una Source, se borran automaticamente sus SourceItems
             entity.HasOne(e => e.Source)
                 .WithMany(s => s.SourceItems)
-                .HasForeignKey(e => e.SourceId);
+                .HasForeignKey(e => e.SourceId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         // Configuracion de Setting
@@ -86,11 +87,30 @@ public class ApwDbContext : DbContext
             entity.Property(e => e.CreatedBy).HasMaxLength(100);
             entity.Property(e => e.ModifiedBy).HasMaxLength(100);
 
-            // Relacion Setting -> Source (opcional, puede ser NULL)
+            // Al borrar una Source, se borran automaticamente sus secrets/settings
             entity.HasOne(e => e.Source)
                 .WithMany(s => s.Settings)
                 .HasForeignKey(e => e.SourceId)
-                .IsRequired(false);
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // Configuracion de Subscription
+        modelBuilder.Entity<Subscription>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("GETDATE()");
+            entity.HasIndex(e => new { e.UserId, e.SourceId }).IsUnique();
+
+            entity.HasOne(e => e.User)
+                .WithMany()
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Source)
+                .WithMany()
+                .HasForeignKey(e => e.SourceId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
     }
 }

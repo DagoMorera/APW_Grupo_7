@@ -1,12 +1,22 @@
 ﻿@model SourceViewModel
 @{
     ViewData["Title"] = "Eliminar Fuente";
+    var itemCount = ViewBag.ItemCount as int? ?? 0;
+
+    var confirmMessage = itemCount > 0
+        ? $"Esta accion no se puede deshacer. ¿Confirmas eliminar '{Model.Name}' y sus {itemCount} item(s) guardado(s)?"
+        : $"Esta accion no se puede deshacer. ¿Confirmas eliminar '{Model.Name}'?";
 }
 
 <h2>Eliminar Fuente</h2>
 
 <div class="alert alert-warning">
     ¿Estas seguro que deseas eliminar esta fuente?
+    @if (itemCount > 0)
+    {
+        <br />
+        <strong>Esta fuente tiene @itemCount item(s) guardado(s). Al eliminarla, tambien se eliminaran de forma permanente.</strong>
+    }
 </div>
 
 <dl class="row">
@@ -18,9 +28,26 @@
 
     <dt class="col-sm-2">Tipo</dt>
     <dd class="col-sm-10">@Model.ComponentType</dd>
+
+    @if (itemCount > 0)
+    {
+        <dt class="col-sm-2">Items guardados</dt>
+        <dd class="col-sm-10 text-warning">@itemCount</dd>
+    }
 </dl>
 
-<form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+<form asp-action="Delete" asp-route-id="@Model.Id" method="post" id="deleteSourceForm" data-confirm="@confirmMessage">
     <button type="submit" class="btn btn-danger">Eliminar</button>
     <a asp-action="Index" class="btn btn-outline-secondary">Cancelar</a>
-</form>Listo ya estan pegadas, sigamos con la prueba....
+</form>
+
+@section Scripts {
+    <script>
+        document.getElementById('deleteSourceForm').addEventListener('submit', function (e) {
+            var message = this.dataset.confirm;
+            if (!confirm(message)) {
+                e.preventDefault();
+            }
+        });
+    </script>
+}

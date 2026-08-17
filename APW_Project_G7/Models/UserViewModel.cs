@@ -9,4 +9,7 @@ public class UserViewModel
     public string? Password { get; set; } // solo se usa al crear el usuario
     public int RoleId { get; set; }
     public bool IsActive { get; set; }
+
+    // Token del feed personal de este usuario
+    public Guid FeedToken { get; set; }
 }

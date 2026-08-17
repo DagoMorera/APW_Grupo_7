@@ -1,6 +1,10 @@
 ﻿@model IEnumerable<ParsedSourceItemViewModel>
 @{
     ViewData["Title"] = $"Explorar - {ViewBag.SourceName}";
+    var subscribedIds = ViewBag.SubscribedSourceIds as HashSet<int> ?? new HashSet<int>();
+    var sourceId = ViewBag.SourceId as int? ?? 0;
+    var isSubscribed = subscribedIds.Contains(sourceId);
+    var returnUrl = Context.Request.Path + Context.Request.QueryString;
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -8,7 +12,28 @@
         <h2>@ViewBag.SourceName</h2>
         <p class="text-muted mb-0">Items en vivo, aun no guardados</p>
     </div>
-    <a asp-action="Index" class="btn btn-outline-secondary">&larr; Volver a Fuentes</a>
+    <div class="d-flex align-items-center gap-2">
+        @if (User.Identity != null && User.Identity.IsAuthenticated)
+        {
+            <form asp-controller="Subscription" asp-action="Toggle" method="post" class="d-inline">
+                <input type="hidden" name="sourceId" value="@sourceId" />
+                <input type="hidden" name="returnUrl" value="@returnUrl" />
+                @if (isSubscribed)
+                {
+                    <button type="submit" class="btn btn-outline-danger">Desuscribirse</button>
+                }
+                else
+                {
+                    <button type="submit" class="btn btn-success">Suscribirse</button>
+                }
+            </form>
+        }
+        else
+        {
+            <a asp-controller="Account" asp-action="Login" class="btn btn-success">Suscribirse</a>
+        }
+        <a asp-action="Index" class="btn btn-outline-secondary">&larr; Volver a Fuentes</a>
+    </div>
 </div>
 
 @if (TempData["Mensaje"] is not null)

@@ -1,0 +1,26 @@
+@model APW.Mvc.Models.SourceViewModel
+@{
+    var subscribedIds = ViewBag.SubscribedSourceIds as HashSet<int> ?? new HashSet<int>();
+    var isSubscribed = subscribedIds.Contains(Model.Id);
+    var returnUrl = Context.Request.Path + Context.Request.QueryString;
+}
+
+@if (User.Identity != null && User.Identity.IsAuthenticated)
+{
+    <form asp-controller="Subscription" asp-action="Toggle" method="post" class="d-inline">
+        <input type="hidden" name="sourceId" value="@Model.Id" />
+        <input type="hidden" name="returnUrl" value="@returnUrl" />
+        @if (isSubscribed)
+        {
+            <button type="submit" class="btn btn-sm btn-outline-danger">Desuscribirse</button>
+        }
+        else
+        {
+            <button type="submit" class="btn btn-sm btn-success">Suscribirse</button>
+        }
+    </form>
+}
+else
+{
+    <a asp-controller="Account" asp-action="Login" class="btn btn-sm btn-success">Suscribirse</a>
+}

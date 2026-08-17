@@ -13,6 +13,8 @@ public class User
     public string? CreatedBy { get; set; }
     public string? ModifiedBy { get; set; }
 
+    public Guid FeedToken { get; set; }
+
     // Rol asignado a este usuario
     public Role Role { get; set; }
 }

@@ -36,6 +36,10 @@ builder.Services.AddScoped<ISourceItemBusiness, SourceItemBusiness>();
 builder.Services.AddScoped<ISettingRepository, SettingRepository>();
 builder.Services.AddScoped<ISettingBusiness, SettingBusiness>();
 
+// Dependency Injection - Subscriptions
+builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
+builder.Services.AddScoped<ISubscriptionBusiness, SubscriptionBusiness>();
+
 
 
 var app = builder.Build();

@@ -1,7 +1,5 @@
 <Solution>
-  <Folder Name="/Elementos de la solución/">
-    <File Path="APW_Project_G7/Controllers/FeedController.cs" />
-  </Folder>
+  <Folder Name="/Elementos de la solución/" />
   <Folder Name="/Solution Items/">
     <File Path=".gitignore.txt" />
   </Folder>

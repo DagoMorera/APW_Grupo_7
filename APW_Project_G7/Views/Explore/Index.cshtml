@@ -24,6 +24,9 @@ else
                     <span class="apw-explore-type">@source.ComponentType</span>
                     <p class="apw-explore-desc">@source.Description</p>
                     <a asp-action="Details" asp-route-id="@source.Id" class="btn btn-apw-primary w-100 mt-auto">Explorar</a>
+                    <div class="mt-2 w-100">
+                        @await Html.PartialAsync("_SubscribeButton", source)
+                    </div>
                 </div>
             </div>
         }

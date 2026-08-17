@@ -1,0 +1,122 @@
+@model APW.Mvc.Models.MyFeedViewModel
+@{
+    ViewData["Title"] = "Mi Feed";
+    var personalFeedUrl = ViewBag.PersonalFeedUrl as string ?? string.Empty;
+    var returnUrl = Context.Request.Path + Context.Request.QueryString;
+}
+
+<h2>Mi Feed Personal</h2>
+<p class="text-muted">
+    Solo items de las fuentes a las que estas suscrito. Copia tu URL personal
+    en un lector de RSS externo (Feedly, Inoreader, etc.) para recibir solo esto, como el feed de un canal de YouTube.
+</p>
+
+<div class="alert alert-warning small">
+    Esta URL es unica y no deberia compartirse: cualquiera que la tenga puede ver tu feed personal (sin necesitar tu password).
+</div>
+
+<div class="input-group mb-4" style="max-width: 620px;">
+    <input type="text" class="form-control" value="@personalFeedUrl" id="apwPersonalFeedUrlInput" readonly
+           onclick="this.select();" />
+    <button class="btn btn-apw-outline" type="button" onclick="navigator.clipboard.writeText(document.getElementById('apwPersonalFeedUrlInput').value)">
+        Copiar
+    </button>
+</div>
+
+<h4 class="mt-4">Mis Suscripciones</h4>
+
+@if (!Model.SubscribedSources.Any())
+{
+    <div class="alert alert-info">
+        Todavia no estas suscrito a ninguna fuente. <a asp-controller="Explore" asp-action="Index">Explora las fuentes disponibles</a> y suscribete a las que te interesen.
+    </div>
+}
+else
+{
+    <div class="list-group mb-4" style="max-width: 720px;">
+        @foreach (var source in Model.SubscribedSources)
+        {
+            <div class="list-group-item d-flex justify-content-between align-items-center apw-subscription-row">
+                <div>
+                    <strong>@source.Name</strong>
+                    <span class="badge apw-badge-source ms-2">@source.ComponentType</span>
+                    @if (!string.IsNullOrWhiteSpace(source.Description))
+                    {
+                        <div class="text-muted small">@source.Description</div>
+                    }
+                </div>
+                <form asp-controller="Subscription" asp-action="Toggle" method="post" class="d-inline">
+                    <input type="hidden" name="sourceId" value="@source.Id" />
+                    <input type="hidden" name="returnUrl" value="@returnUrl" />
+                    <button type="submit" class="btn btn-sm btn-outline-danger">Desuscribirse</button>
+                </form>
+            </div>
+        }
+    </div>
+}
+
+<h4 class="mt-4">Items de mis fuentes</h4>
+
+@if (Model.SubscribedSources.Any() && !Model.Entries.Any())
+{
+    <div class="alert alert-info">
+        Estas suscrito, pero tus fuentes todavia no tienen items guardados.
+    </div>
+}
+else if (Model.Entries.Any())
+{
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @foreach (var entry in Model.Entries)
+        {
+            <div class="col">
+                <div class="card h-100 apw-feed-card">
+                    @if (!string.IsNullOrWhiteSpace(entry.ImageUrl))
+                    {
+                        <img src="@entry.ImageUrl" class="card-img-top" alt="@entry.Title"
+                             style="height: 180px; object-fit: cover;"
+                             onerror="this.style.display='none';" />
+                    }
+                    <div class="card-body d-flex flex-column">
+                        <span class="badge apw-badge-source align-self-start mb-2">@entry.SourceName</span>
+
+                        <h5 class="card-title">@entry.Title</h5>
+
+                        <p class="card-text small"
+                           style="display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden;">
+                            @entry.Description
+                        </p>
+
+                        <div class="mt-auto">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <small class="text-muted">@entry.CreatedAt.ToLocalTime().ToString("dd MMM yyyy, HH:mm")</small>
+                                <a href="@entry.Link" target="_blank" rel="noopener" class="btn btn-sm btn-apw-outline">Ver original &#8599;</a>
+                            </div>
+
+                            @if (!string.IsNullOrWhiteSpace(entry.RawJson))
+                            {
+                                <details class="apw-json-details">
+                                    <summary>Ver JSON completo</summary>
+                                    <pre class="apw-json-block">@entry.RawJson</pre>
+                                </details>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@section Scripts {
+    <style>
+        .apw-feed-card { background-color: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .apw-badge-source { background-color: rgba(45, 212, 191, 0.15); color: #2dd4bf; font-weight: 500; }
+        .apw-subscription-row { background-color: rgba(255, 255, 255, 0.03); border-color: rgba(255, 255, 255, 0.1); }
+        .apw-json-details summary { cursor: pointer; color: #9ca3af; font-size: 0.85rem; }
+        .apw-json-block {
+            background-color: #000; color: #6ee7b7; font-size: 0.75rem; padding: 0.75rem;
+            margin-top: 0.5rem; max-height: 220px; overflow: auto; white-space: pre-wrap;
+            word-break: break-word; border-radius: 4px;
+        }
+    </style>
+}
