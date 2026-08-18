@@ -36,12 +36,13 @@ public class ImportController : Controller
         }
 
         ExportItemViewModel? export;
+        string rawContent;
         using (var reader = new StreamReader(jsonFile.OpenReadStream()))
         {
-            var content = await reader.ReadToEndAsync();
+            rawContent = await reader.ReadToEndAsync();
             try
             {
-                export = System.Text.Json.JsonSerializer.Deserialize<ExportItemViewModel>(content);
+                export = System.Text.Json.JsonSerializer.Deserialize<ExportItemViewModel>(rawContent);
             }
             catch (System.Text.Json.JsonException)
             {
@@ -50,15 +51,15 @@ public class ImportController : Controller
             }
         }
 
-        if (export is null || string.IsNullOrWhiteSpace(export.Source.Url))
+        if (export is null || string.IsNullOrWhiteSpace(export.SourceUrl))
         {
-            ModelState.AddModelError(string.Empty, "El archivo no tiene la estructura esperada (Source/Item)");
+            ModelState.AddModelError(string.Empty, "El archivo no tiene la estructura esperada");
             return View();
         }
 
         // Busca si la Source ya existe (por Url), si no existe la crea
         var existingSources = await _sourceService.GetSourcesAsync();
-        var matchingSource = existingSources.FirstOrDefault(s => s.Url == export.Source.Url);
+        var matchingSource = existingSources.FirstOrDefault(s => s.Url == export.SourceUrl);
 
         int sourceId;
         if (matchingSource is not null)
@@ -69,26 +70,25 @@ public class ImportController : Controller
         {
             var newSource = new SourceViewModel
             {
-                Url = export.Source.Url,
-                Name = export.Source.Name,
-                Description = export.Source.Description,
-                ComponentType = export.Source.ComponentType,
-                RequiresSecret = export.Source.RequiresSecret
+                Url = export.SourceUrl,
+                Name = export.SourceName,
+                Description = export.SourceDescription,
+                ComponentType = export.SourceComponentType,
+                RequiresSecret = export.SourceRequiresSecret
             };
             await _sourceService.CreateSourceAsync(newSource);
-
             var refreshedSources = await _sourceService.GetSourcesAsync();
-            sourceId = refreshedSources.First(s => s.Url == export.Source.Url).Id;
+            sourceId = refreshedSources.First(s => s.Url == export.SourceUrl).Id;
         }
 
         // Crea el SourceItem con el contenido normalizado del item importado
         var parsedItem = new ParsedSourceItemViewModel
         {
-            Title = export.Item.Title,
-            Description = export.Item.Description,
-            Link = export.Item.Link,
-            ImageUrl = export.Item.ImageUrl,
-            RawJson = export.Item.RawJson
+            Title = export.Title,
+            Description = export.Description,
+            Link = export.Url,
+            ImageUrl = export.ImageUrl,
+            RawJson = rawContent
         };
 
         var sourceItem = new SourceItemViewModel
@@ -99,7 +99,7 @@ public class ImportController : Controller
 
         await _sourceItemService.CreateSourceItemAsync(sourceItem);
 
-        TempData["Mensaje"] = $"Item '{export.Item.Title}' importado correctamente";
+        TempData["Mensaje"] = $"Item '{export.Title}' importado correctamente";
         return RedirectToAction(nameof(Index));
     }
 }

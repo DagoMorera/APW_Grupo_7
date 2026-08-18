@@ -43,6 +43,7 @@ public class HomeController : Controller
 
         return View(feed);
     }
+
     // Descarga un item guardado en formato JSON, interoperable con otras apps
     public async Task<IActionResult> DownloadItem(int id)
     {
@@ -57,27 +58,20 @@ public class HomeController : Controller
 
         var export = new ExportItemViewModel
         {
-            Source = new ExportSourceViewModel
-            {
-                Url = source.Url,
-                Name = source.Name,
-                Description = source.Description,
-                ComponentType = source.ComponentType,
-                RequiresSecret = source.RequiresSecret
-            },
-            Item = new ExportContentViewModel
-            {
-                Title = parsed.Title,
-                Description = parsed.Description,
-                Link = parsed.Link,
-                ImageUrl = parsed.ImageUrl,
-                RawJson = parsed.RawJson
-            }
+            Title = parsed.Title,
+            Description = parsed.Description,
+            ImageUrl = parsed.ImageUrl,
+            Url = parsed.Link,
+            PublishedAt = item.CreatedAt, // TODO: reemplazar por la fecha real de publicacion si en algun momento se captura
+            SourceName = source.Name,
+            SourceUrl = source.Url,
+            SourceDescription = source.Description,
+            SourceComponentType = source.ComponentType,
+            SourceRequiresSecret = source.RequiresSecret
         };
 
         var json = System.Text.Json.JsonSerializer.Serialize(export, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
         var bytes = System.Text.Encoding.UTF8.GetBytes(json);
-
         return File(bytes, "application/json", $"apw-item-{id}.json");
     }
 

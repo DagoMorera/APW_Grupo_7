@@ -1,3 +1,8 @@
+create database APW;
+
+USE APW;
+GO
+
 -- Tabla de Roles del sistema (Admin, User, etc.)
 CREATE TABLE Roles (
     Id INT IDENTITY(1,1) PRIMARY KEY,
@@ -56,3 +61,20 @@ CREATE TABLE Settings (
     CONSTRAINT FK_Settings_Sources FOREIGN KEY (SourceId) REFERENCES Sources(Id)
 );
 GO
+
+SELECT * FROM Users;
+
+SELECT * FROM Roles;
+
+INSERT INTO Roles (Name) VALUES ('User');
+INSERT INTO Roles (Name) VALUES ('Admin');
+
+SELECT Id, Username, RoleId FROM Users;
+
+UPDATE Users SET RoleId = (SELECT Id FROM Roles WHERE Name = 'Admin') WHERE Username = 'Rogsandi';
+
+SELECT * FROM Sources;
+SELECT * FROM Settings;
+
+INSERT INTO Settings (SourceId, KeyName, KeyValue, CreatedAt) 
+VALUES (1, 'ApiKey', '451bc4bf467d4518b3ea2a579e5ed8a7', GETDATE());
