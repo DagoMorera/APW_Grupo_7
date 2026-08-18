@@ -1,6 +1,5 @@
 using System.Security.Claims;
 using System.Text;
-using System.Text.Json;
 using System.Xml.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,25 +8,24 @@ using APW.Mvc.Service;
 
 namespace APW.Mvc.Controllers;
 
+// Publica el RSS 2.0 global, el feed personal por usuario y gestiona /Feed/Mine.
 public class FeedController : Controller
 {
-    private const int MaxItems = 50;
-
-    private readonly ISourceItemService _sourceItemService;
     private readonly ISourceService _sourceService;
     private readonly ISubscriptionService _subscriptionService;
     private readonly IUserService _userService;
+    private readonly IFeedEntryProvider _feedEntryProvider;
 
     public FeedController(
-        ISourceItemService sourceItemService,
         ISourceService sourceService,
         ISubscriptionService subscriptionService,
-        IUserService userService)
+        IUserService userService,
+        IFeedEntryProvider feedEntryProvider)
     {
-        _sourceItemService = sourceItemService;
         _sourceService = sourceService;
         _subscriptionService = subscriptionService;
         _userService = userService;
+        _feedEntryProvider = feedEntryProvider;
     }
 
     // GET /feed.xml
@@ -36,7 +34,7 @@ public class FeedController : Controller
     public async Task<IActionResult> Rss()
     {
         var baseUrl = $"{Request.Scheme}://{Request.Host}";
-        var entries = await GetFeedEntriesAsync(baseUrl);
+        var entries = await _feedEntryProvider.GetEntriesAsync(baseUrl);
         return BuildRssResult(entries, "APW - Feed de contenido guardado",
             "Items curados y guardados desde las fuentes configuradas en APW", baseUrl);
     }
@@ -44,11 +42,9 @@ public class FeedController : Controller
     // GET /Feed
     [Route("Feed")]
     [Route("Feed/Preview")]
-    public async Task<IActionResult> Preview()
+    public IActionResult Preview()
     {
-        var baseUrl = $"{Request.Scheme}://{Request.Host}";
-        var entries = await GetFeedEntriesAsync(baseUrl);
-        return View(entries);
+        return RedirectToAction("Index", "Home");
     }
 
     // GET /Feed/Mine
@@ -64,24 +60,13 @@ public class FeedController : Controller
 
         var subscribedSourceIds = (await _subscriptionService.GetSubscribedSourceIdsAsync(userId)).ToHashSet();
 
-        var allSources = await _sourceService.GetSourcesAsync();
-        var subscribedSources = allSources
-            .Where(s => subscribedSourceIds.Contains(s.Id))
-            .OrderBy(s => s.Name)
-            .ToList();
-
-        var allEntries = await GetFeedEntriesAsync(baseUrl);
+        var allEntries = await _feedEntryProvider.GetEntriesAsync(baseUrl);
         var myEntries = allEntries.Where(e => subscribedSourceIds.Contains(e.SourceId)).ToList();
 
         ViewBag.PersonalFeedUrl = $"{baseUrl}/feed/{user.FeedToken}.xml";
+        ViewBag.HasSubscriptions = subscribedSourceIds.Count > 0;
 
-        var model = new MyFeedViewModel
-        {
-            SubscribedSources = subscribedSources,
-            Entries = myEntries
-        };
-
-        return View(model);
+        return View(myEntries);
     }
 
     // GET /feed/{token}.xml
@@ -94,14 +79,13 @@ public class FeedController : Controller
         var baseUrl = $"{Request.Scheme}://{Request.Host}";
         var subscribedSourceIds = (await _subscriptionService.GetSubscribedSourceIdsAsync(user.Id)).ToHashSet();
 
-        var allEntries = await GetFeedEntriesAsync(baseUrl);
+        var allEntries = await _feedEntryProvider.GetEntriesAsync(baseUrl);
         var myEntries = allEntries.Where(e => subscribedSourceIds.Contains(e.SourceId));
 
         return BuildRssResult(myEntries, $"APW - Feed personal de {user.Username}",
             "Items de las fuentes a las que este usuario esta suscrito", baseUrl);
     }
 
-    // Arma el XML final de RSS 2.0 a partir de una lista de entradas ya normalizadas
     private IActionResult BuildRssResult(IEnumerable<FeedEntryViewModel> entries, string title, string description, string baseUrl)
     {
         var channelItems = entries.Select(entry => BuildItemElement(entry, baseUrl));
@@ -125,48 +109,6 @@ public class FeedController : Controller
         return Content(xml, "application/rss+xml", Encoding.UTF8);
     }
 
-    // Trae los SourceItem guardados
-    private async Task<List<FeedEntryViewModel>> GetFeedEntriesAsync(string baseUrl)
-    {
-        var savedItems = await _sourceItemService.GetSourceItemsAsync();
-        var sources = await _sourceService.GetSourcesAsync();
-        var sourceNames = sources.ToDictionary(s => s.Id, s => s.Name);
-
-        var parsed = savedItems
-            .Select(item => new
-            {
-                item.Id,
-                item.CreatedAt,
-                item.SourceId,
-                Parsed = JsonSerializer.Deserialize<ParsedSourceItemViewModel>(item.Json)
-            })
-            .Where(x => x.Parsed is not null)
-            .ToList();
-
-        var deduplicated = parsed
-            .GroupBy(x => string.IsNullOrWhiteSpace(x.Parsed!.Link)
-                ? $"title:{x.Parsed.Title}"
-                : $"link:{x.Parsed.Link}")
-            .Select(group => group.OrderByDescending(x => x.CreatedAt).First());
-
-        return deduplicated
-            .OrderByDescending(x => x.CreatedAt)
-            .Take(MaxItems)
-            .Select(x => new FeedEntryViewModel
-            {
-                Id = x.Id,
-                SourceId = x.SourceId,
-                Title = string.IsNullOrWhiteSpace(x.Parsed!.Title) ? "Sin titulo" : x.Parsed.Title,
-                Description = x.Parsed.Description ?? string.Empty,
-                Link = string.IsNullOrWhiteSpace(x.Parsed.Link) ? $"{baseUrl}/Home/DownloadItem/{x.Id}" : x.Parsed.Link,
-                ImageUrl = x.Parsed.ImageUrl,
-                SourceName = sourceNames.TryGetValue(x.SourceId, out var name) ? name : "Desconocida",
-                CreatedAt = x.CreatedAt,
-                RawJson = PrettyPrintJson(x.Parsed.RawJson)
-            })
-            .ToList();
-    }
-
     private static XElement BuildItemElement(FeedEntryViewModel entry, string baseUrl)
     {
         var element = new XElement("item",
@@ -188,21 +130,6 @@ public class FeedController : Controller
         }
 
         return element;
-    }
-
-    private static string PrettyPrintJson(string json)
-    {
-        if (string.IsNullOrWhiteSpace(json)) return string.Empty;
-
-        try
-        {
-            using var document = JsonDocument.Parse(json);
-            return JsonSerializer.Serialize(document, new JsonSerializerOptions { WriteIndented = true });
-        }
-        catch (JsonException)
-        {
-            return json;
-        }
     }
 
     private int GetUserId()

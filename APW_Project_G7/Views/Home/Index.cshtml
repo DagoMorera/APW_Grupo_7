@@ -1,48 +1,67 @@
-﻿@model IEnumerable<FeedItemViewModel>
+﻿@model List<APW.Mvc.Models.FeedEntryViewModel>
 @{
     ViewData["Title"] = "Inicio";
 }
 
-<div class="apw-hero mb-4">
-    <h1 class="display-6 fw-bold">Tu Feed de Noticias</h1>
-    <p class="text-muted">Los items guardados de todas tus fuentes, en un solo lugar</p>
-</div>
+<h1>Noticias</h1>
+<p class="text-muted">Las noticias que quieres en un solo lugar</p>
 
 @if (!Model.Any())
 {
-    <div class="alert alert-info text-center">
-        Todavia no hay items guardados.
-        <a asp-controller="Explore" asp-action="Index" class="alert-link">Explora tus fuentes</a> para agregar los primeros.
+    <div class="alert alert-info">
+        Todavia no hay items guardados. <a asp-controller="Explore" asp-action="Index">Explora tus fuentes</a> para agregar los primeros.
     </div>
 }
 else
 {
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-        @foreach (var item in Model)
+        @foreach (var entry in Model)
         {
             <div class="col">
                 <div class="card h-100 apw-feed-card">
-                    @if (!string.IsNullOrWhiteSpace(item.ImageUrl))
+                    @if (!string.IsNullOrWhiteSpace(entry.ImageUrl))
                     {
-                        <img src="@item.ImageUrl" class="card-img-top apw-feed-img" alt="@item.Title" />
+                        <img src="@entry.ImageUrl" class="card-img-top" alt="@entry.Title"
+                             style="height: 180px; object-fit: cover;"
+                             onerror="this.style.display='none';" />
                     }
                     <div class="card-body d-flex flex-column">
-                        <span class="badge bg-secondary align-self-start mb-2">@item.SourceName</span>
-                        <h5 class="card-title">@item.Title</h5>
-                        <p class="card-text apw-feed-description">@item.Description</p>
-                        <div class="mt-auto pt-2">
-                            <small class="text-muted d-block mb-2">@item.CreatedAt.ToLocalTime().ToString("dd MMM yyyy, HH:mm")</small>
-                            <div class="d-flex gap-2">
-                                @if (!string.IsNullOrWhiteSpace(item.Link))
-                                {
-                                    <a href="@item.Link" target="_blank" class="btn btn-sm btn-outline-secondary flex-fill">Ver mas</a>
-                                }
-                                <a asp-action="DownloadItem" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary flex-fill">Descargar</a>
+                        <span class="badge apw-badge-source align-self-start mb-2">@entry.SourceName</span>
+                        <h5 class="card-title">@entry.Title</h5>
+                        <p class="card-text small"
+                           style="display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden;">
+                            @entry.Description
+                        </p>
+                        <div class="mt-auto">
+                            <small class="text-muted d-block mb-2">@entry.CreatedAt.ToLocalTime().ToString("dd MMM yyyy, HH:mm")</small>
+                            <div class="d-flex gap-2 mb-2">
+                                <a href="@entry.Link" target="_blank" rel="noopener" class="btn btn-sm btn-apw-outline flex-fill">Ver mas</a>
+                                <a asp-action="DownloadItem" asp-route-id="@entry.Id" class="btn btn-sm btn-apw-outline flex-fill">Descargar</a>
                             </div>
+                            @if (!string.IsNullOrWhiteSpace(entry.RawJson))
+                            {
+                                <details class="apw-json-details">
+                                    <summary>Ver JSON completo</summary>
+                                    <pre class="apw-json-block">@entry.RawJson</pre>
+                                </details>
+                            }
                         </div>
                     </div>
                 </div>
             </div>
         }
     </div>
+}
+
+@section Scripts {
+    <style>
+        .apw-feed-card { background-color: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .apw-badge-source { background-color: rgba(45, 212, 191, 0.15); color: #2dd4bf; font-weight: 500; }
+        .apw-json-details summary { cursor: pointer; color: #9ca3af; font-size: 0.85rem; }
+        .apw-json-block {
+            background-color: #000; color: #6ee7b7; font-size: 0.75rem; padding: 0.75rem;
+            margin-top: 0.5rem; max-height: 220px; overflow: auto; white-space: pre-wrap;
+            word-break: break-word; border-radius: 4px;
+        }
+    </style>
 }

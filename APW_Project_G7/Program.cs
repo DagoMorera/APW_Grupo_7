@@ -18,6 +18,7 @@ builder.Services.AddTransient<ISourceItemService, SourceItemService>();
 builder.Services.AddTransient<ISettingService, SettingService>();
 builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddTransient<ISubscriptionService, SubscriptionService>();
+builder.Services.AddTransient<IFeedEntryProvider, FeedEntryProvider>();
 
 // Autenticacion basada en Cookies, sesion del usuario logueado
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

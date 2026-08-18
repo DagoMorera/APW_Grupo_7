@@ -1,61 +1,33 @@
-@model APW.Mvc.Models.MyFeedViewModel
+@model List<APW.Mvc.Models.FeedEntryViewModel>
 @{
     ViewData["Title"] = "Mi Feed";
     var personalFeedUrl = ViewBag.PersonalFeedUrl as string ?? string.Empty;
+    var hasSubscriptions = ViewBag.HasSubscriptions as bool? ?? false;
     var returnUrl = Context.Request.Path + Context.Request.QueryString;
 }
 
 <h2>Mi Feed Personal</h2>
 <p class="text-muted">
-    Aquí puedes ver las noticias a las que estas suscrito
+    Aquí puedes ver el contenido al que estas suscrito
 </p>
 
 
-
-<h4 class="mt-4">Mis Suscripciones</h4>
-
-@if (!Model.SubscribedSources.Any())
+@if (!hasSubscriptions)
 {
     <div class="alert alert-info">
         Todavia no estas suscrito a ninguna fuente. <a asp-controller="Explore" asp-action="Index">Explora las fuentes disponibles</a> y suscribete a las que te interesen.
     </div>
 }
-else
-{
-    <div class="list-group mb-4" style="max-width: 720px;">
-        @foreach (var source in Model.SubscribedSources)
-        {
-            <div class="list-group-item d-flex justify-content-between align-items-center apw-subscription-row">
-                <div>
-                    <strong>@source.Name</strong>
-                    <span class="badge apw-badge-source ms-2">@source.ComponentType</span>
-                    @if (!string.IsNullOrWhiteSpace(source.Description))
-                    {
-                        <div class="text-muted small">@source.Description</div>
-                    }
-                </div>
-                <form asp-controller="Subscription" asp-action="Toggle" method="post" class="d-inline">
-                    <input type="hidden" name="sourceId" value="@source.Id" />
-                    <input type="hidden" name="returnUrl" value="@returnUrl" />
-                    <button type="submit" class="btn btn-sm btn-outline-danger">Desuscribirse</button>
-                </form>
-            </div>
-        }
-    </div>
-}
-
-<h4 class="mt-4">Items de mis fuentes</h4>
-
-@if (Model.SubscribedSources.Any() && !Model.Entries.Any())
+else if (!Model.Any())
 {
     <div class="alert alert-info">
         Estas suscrito, pero tus fuentes todavia no tienen items guardados.
     </div>
 }
-else if (Model.Entries.Any())
+else
 {
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-        @foreach (var entry in Model.Entries)
+        @foreach (var entry in Model)
         {
             <div class="col">
                 <div class="card h-100 apw-feed-card">
@@ -83,11 +55,19 @@ else if (Model.Entries.Any())
 
                             @if (!string.IsNullOrWhiteSpace(entry.RawJson))
                             {
-                                <details class="apw-json-details">
+                                <details class="apw-json-details mb-2">
                                     <summary>Ver JSON completo</summary>
                                     <pre class="apw-json-block">@entry.RawJson</pre>
                                 </details>
                             }
+
+                            <form asp-controller="Subscription" asp-action="Toggle" method="post">
+                                <input type="hidden" name="sourceId" value="@entry.SourceId" />
+                                <input type="hidden" name="returnUrl" value="@returnUrl" />
+                                <button type="submit" class="btn btn-sm btn-outline-danger w-100">
+                                    Desuscribirse de @entry.SourceName
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -100,7 +80,6 @@ else if (Model.Entries.Any())
     <style>
         .apw-feed-card { background-color: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); }
         .apw-badge-source { background-color: rgba(45, 212, 191, 0.15); color: #2dd4bf; font-weight: 500; }
-        .apw-subscription-row { background-color: rgba(255, 255, 255, 0.03); border-color: rgba(255, 255, 255, 0.1); }
         .apw-json-details summary { cursor: pointer; color: #9ca3af; font-size: 0.85rem; }
         .apw-json-block {
             background-color: #000; color: #6ee7b7; font-size: 0.75rem; padding: 0.75rem;

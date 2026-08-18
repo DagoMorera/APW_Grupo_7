@@ -10,41 +10,29 @@ public class HomeController : Controller
     private readonly ILogger<HomeController> _logger;
     private readonly ISourceItemService _sourceItemService;
     private readonly ISourceService _sourceService;
+    private readonly IFeedEntryProvider _feedEntryProvider;
 
-    public HomeController(ILogger<HomeController> logger, ISourceItemService sourceItemService, ISourceService sourceService)
+    public HomeController(
+        ILogger<HomeController> logger,
+        ISourceItemService sourceItemService,
+        ISourceService sourceService,
+        IFeedEntryProvider feedEntryProvider)
     {
         _logger = logger;
         _sourceItemService = sourceItemService;
         _sourceService = sourceService;
+        _feedEntryProvider = feedEntryProvider;
     }
 
-    // Feed principal: items ya guardados en la BD, mezclados de todas las fuentes
+    // Home es el feed global
     public async Task<IActionResult> Index()
     {
-        var savedItems = await _sourceItemService.GetSourceItemsAsync();
-        var sources = await _sourceService.GetSourcesAsync();
-        var sourceNames = sources.ToDictionary(s => s.Id, s => s.Name);
-
-        var feed = savedItems
-            .Select(item => new { item.Id, item.CreatedAt, item.SourceId, Parsed = System.Text.Json.JsonSerializer.Deserialize<ParsedSourceItemViewModel>(item.Json) })
-            .Where(x => x.Parsed is not null)
-            .Select(x => new FeedItemViewModel
-            {
-                Id = x.Id,
-                Title = x.Parsed!.Title,
-                Description = x.Parsed.Description,
-                Link = x.Parsed.Link,
-                ImageUrl = x.Parsed.ImageUrl,
-                SourceName = sourceNames.TryGetValue(x.SourceId, out var name) ? name : "Desconocida",
-                CreatedAt = x.CreatedAt
-            })
-            .OrderByDescending(f => f.CreatedAt)
-            .ToList();
-
-        return View(feed);
+        var baseUrl = $"{Request.Scheme}://{Request.Host}";
+        var entries = await _feedEntryProvider.GetEntriesAsync(baseUrl);
+        return View(entries);
     }
 
-    // Descarga un item guardado en formato JSON, interoperable con otras apps
+    // Descarga un item guardado en formato JSON, interoperable con otras apps.
     public async Task<IActionResult> DownloadItem(int id)
     {
         var item = await _sourceItemService.GetSourceItemByIdAsync(id);
