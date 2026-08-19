@@ -50,7 +50,7 @@ public class HomeController : Controller
             Description = parsed.Description,
             ImageUrl = parsed.ImageUrl,
             Url = parsed.Link,
-            PublishedAt = item.CreatedAt, // TODO: reemplazar por la fecha real de publicacion si en algun momento se captura
+            PublishedAt = item.CreatedAt.ToString("o"), // formato ISO 8601
             SourceName = source.Name,
             SourceUrl = source.Url,
             SourceDescription = source.Description,
