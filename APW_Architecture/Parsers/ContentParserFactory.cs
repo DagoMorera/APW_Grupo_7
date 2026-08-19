@@ -8,7 +8,7 @@ public static class ContentParserFactory
         return componentType.ToLowerInvariant() switch
         {
             "json" => new JsonContentParser(),
-            "xml" => new XmlContentParser(),
+            "xml" or "rss" or "feed" => new XmlContentParser(),
             "html" => new HtmlContentParser(),
             _ => throw new APWException($"Tipo de fuente no soportado: {componentType}")
         };
