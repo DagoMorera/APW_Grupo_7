@@ -17,9 +17,9 @@
 <div class="apw-card p-6 max-w-lg" data-aos="fade-up">
     <form asp-action="Index" method="post" enctype="multipart/form-data">
         <label for="jsonFile" id="apwDropzone" class="flex flex-col items-center justify-center text-center border-2 border-dashed border-apwborderstrong rounded-lg py-10 px-5 cursor-pointer transition hover:border-apwaccent hover:bg-apwsurfacealt">
-            <div class="text-4xl mb-3">&#128220;</div>
-            <div class="text-sm mb-2">Arrastra tu archivo aqui, o haz clic para seleccionar</div>
-            <div class="text-xs text-apwaccent italic" id="apwFileName">Ningun archivo seleccionado</div>
+            <div class="text-4xl mb-3" id="apwDropzoneIcon">&#128220;</div>
+            <div class="text-sm mb-2" id="apwDropzoneHint">Arrastra tu archivo aqui, o haz clic para seleccionar</div>
+            <div class="text-sm font-semibold text-apwaccent" id="apwFileName">Ningun archivo seleccionado</div>
             <input type="file" id="jsonFile" name="jsonFile" accept=".json" class="hidden" required />
         </label>
         <button type="submit" class="apw-btn-primary w-full mt-4">Importar</button>
@@ -31,22 +31,51 @@
         const input = document.getElementById('jsonFile');
         const fileName = document.getElementById('apwFileName');
         const dropzone = document.getElementById('apwDropzone');
+        const dropzoneIcon = document.getElementById('apwDropzoneIcon');
+        const dropzoneHint = document.getElementById('apwDropzoneHint');
+
+        const loadedClasses = ['border-apwaccent', 'bg-apwsurfacealt', 'border-solid'];
+        const dashedClass = 'border-dashed';
+
+        function setLoadedState(file) {
+            fileName.textContent = `Archivo cargado: ${file.name}`;
+            dropzoneIcon.textContent = '✅';
+            dropzoneHint.textContent = 'Listo. Puedes arrastrar otro archivo para reemplazarlo';
+            dropzone.classList.remove(dashedClass);
+            dropzone.classList.add(...loadedClasses);
+        }
+
+        function clearLoadedState() {
+            fileName.textContent = 'Ningun archivo seleccionado';
+            dropzoneIcon.textContent = '📄';
+            dropzoneHint.textContent = 'Arrastra tu archivo aqui, o haz clic para seleccionar';
+            dropzone.classList.add(dashedClass);
+            dropzone.classList.remove(...loadedClasses);
+        }
 
         input.addEventListener('change', () => {
-            fileName.textContent = input.files.length > 0 ? input.files[0].name : 'Ningun archivo seleccionado';
+            if (input.files.length > 0) {
+                setLoadedState(input.files[0]);
+            } else {
+                clearLoadedState();
+            }
         });
 
         ['dragover', 'dragleave', 'drop'].forEach(evt => {
             dropzone.addEventListener(evt, e => e.preventDefault());
         });
 
-        dropzone.addEventListener('dragover', () => dropzone.classList.add('border-apwaccent'));
-        dropzone.addEventListener('dragleave', () => dropzone.classList.remove('border-apwaccent'));
+        dropzone.addEventListener('dragover', () => dropzone.classList.add(...loadedClasses));
+        dropzone.addEventListener('dragleave', () => {
+            if (input.files.length === 0) dropzone.classList.remove(...loadedClasses);
+        });
+
         dropzone.addEventListener('drop', (e) => {
-            dropzone.classList.remove('border-apwaccent');
             if (e.dataTransfer.files.length > 0) {
                 input.files = e.dataTransfer.files;
-                fileName.textContent = e.dataTransfer.files[0].name;
+                setLoadedState(e.dataTransfer.files[0]);
+            } else if (input.files.length === 0) {
+                dropzone.classList.remove(...loadedClasses);
             }
         });
     </script>
