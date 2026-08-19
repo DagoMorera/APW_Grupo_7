@@ -1,4 +1,4 @@
-﻿@model IEnumerable<SourceViewModel>
+﻿@model IEnumerable<ExploreSourceCardViewModel>
 @{
     ViewData["Title"] = "Explorar Fuentes";
 }
@@ -19,14 +19,19 @@ else
         {
             <div class="col">
                 <div class="apw-explore-card">
-                    <div class="apw-explore-seal">&#9670;</div>
+                    @if (!string.IsNullOrWhiteSpace(source.PreviewImageUrl))
+                    {
+                        <img src="@source.PreviewImageUrl" class="apw-explore-preview-img" alt="@source.Name"
+                             onerror="this.style.display='none';" />
+                    }
+                    else
+                    {
+                        <div class="apw-explore-seal">&#9670;</div>
+                    }
                     <h5 class="apw-explore-title">@source.Name</h5>
                     <span class="apw-explore-type">@source.ComponentType</span>
                     <p class="apw-explore-desc">@source.Description</p>
                     <a asp-action="Details" asp-route-id="@source.Id" class="btn btn-apw-primary w-100 mt-auto">Explorar</a>
-                    <div class="mt-2 w-100">
-                        @await Html.PartialAsync("_SubscribeButton", source)
-                    </div>
                 </div>
             </div>
         }

@@ -20,12 +20,36 @@ public class ExploreController : Controller
         _subscriptionService = subscriptionService;
     }
 
-    // GET /Explore
+    // GET /Explore - catalogo de fuentes disponibles, con preview de imagen
     public async Task<IActionResult> Index()
     {
         var sources = await _sourceService.GetSourcesAsync();
-        ViewBag.SubscribedSourceIds = await GetSubscribedSourceIdsAsync();
-        return View(sources);
+        var cards = new List<ExploreSourceCardViewModel>();
+
+        foreach (var source in sources)
+        {
+            string? previewImage = null;
+            try
+            {
+                var items = await _sourceService.GetParsedItemsAsync(source.Id);
+                previewImage = items.FirstOrDefault(i => !string.IsNullOrWhiteSpace(i.ImageUrl))?.ImageUrl;
+            }
+            catch
+            {
+                // Si la fuente falla o no responde, seguimos sin imagen de preview
+            }
+
+            cards.Add(new ExploreSourceCardViewModel
+            {
+                Id = source.Id,
+                Name = source.Name,
+                Description = source.Description,
+                ComponentType = source.ComponentType,
+                PreviewImageUrl = previewImage
+            });
+        }
+
+        return View(cards);
     }
 
     // GET /Explore/Details/5

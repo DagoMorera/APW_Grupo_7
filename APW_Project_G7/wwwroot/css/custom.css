@@ -472,3 +472,11 @@ a {
     color: var(--apw-text);
     max-width: 160px;
 }
+/* Imagen de preview en tarjetas de Explorar */
+.apw-explore-preview-img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-bottom: 14px;
+}
