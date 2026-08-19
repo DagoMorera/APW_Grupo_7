@@ -3,73 +3,71 @@
     ViewData["Title"] = "Configuracion";
 }
 
-<div class="apw-hero mb-4">
-    <h1 class="display-6">Configuracion</h1>
-    <p class="text-muted">Asignacion de roles y gestion de secrets del sistema</p>
+<div class="mb-8" data-aos="fade-up">
+    <h1 class="font-display text-3xl">Configuracion</h1>
+    <p class="text-apwmuted mt-2">Asignacion de roles y gestion de secrets del sistema</p>
 </div>
 
 @if (TempData["Mensaje"] is not null)
 {
-    <div class="alert alert-success">@TempData["Mensaje"]</div>
+    <div class="bg-green-900/30 border border-apwaccent text-apwaccent rounded-lg p-3 mb-4">@TempData["Mensaje"]</div>
 }
 
-<!-- Seccion: Usuarios y Roles -->
-<div class="apw-settings-section mb-5">
-    <h3 class="mb-3">Usuarios y Roles</h3>
+<div class="mb-10" data-aos="fade-up">
+    <h3 class="font-display text-xl border-l-4 border-apwaccent pl-3 mb-4">Usuarios y Roles</h3>
 
-    <div class="apw-source-list">
+    <div class="flex flex-col gap-3">
         @foreach (var user in Model.Users)
         {
-            <div class="apw-source-row">
-                <div class="apw-source-main">
-                    <div class="apw-source-name">@user.Username</div>
-                    <div class="apw-source-url">@user.Email</div>
+            <div class="apw-card border-l-4 border-l-apwaccent flex items-center gap-4 p-4 flex-wrap">
+                <div class="flex-1 min-w-[150px]">
+                    <div class="font-display">@user.Username</div>
+                    <div class="text-sm text-apwmuted">@user.Email</div>
                 </div>
-                <form asp-action="UpdateRole" method="post" class="d-flex gap-2 align-items-center">
+                <form asp-action="UpdateRole" method="post" class="flex gap-2 items-center">
                     <input type="hidden" name="userId" value="@user.Id" />
-                    <select name="roleId" class="form-select form-select-sm apw-role-select">
+                    <select name="roleId" class="apw-input max-w-[160px]">
                         @foreach (var role in Model.Roles)
                         {
                             <option value="@role.Id" selected="@(role.Id == user.RoleId)">@role.Name</option>
                         }
                     </select>
-                    <button type="submit" class="btn btn-sm btn-apw-primary">Guardar</button>
+                    <button type="submit" class="apw-btn-primary">Guardar</button>
                 </form>
             </div>
         }
     </div>
 </div>
 
-<!-- Seccion: Secrets -->
-<div class="apw-settings-section">
-    <h3 class="mb-3">Secrets</h3>
+<div data-aos="fade-up">
+    <h3 class="font-display text-xl border-l-4 border-apwaccent pl-3 mb-4">Secrets</h3>
 
-    <div class="apw-source-list mb-4">
+    <div class="flex flex-col gap-3 mb-6">
         @if (!Model.Secrets.Any())
         {
-            <div class="alert alert-info">No hay secrets configurados todavia.</div>
+            <div class="apw-card p-6 text-center">No hay secrets configurados todavia.</div>
         }
         @foreach (var secret in Model.Secrets)
         {
-            <div class="apw-source-row">
-                <div class="apw-source-main">
-                    <div class="apw-source-name">@secret.KeyName</div>
-                    <div class="apw-source-url">@secret.SourceName &middot; @secret.KeyValue.Substring(0, Math.Min(8, secret.KeyValue.Length))****</div>
+            <div class="apw-card border-l-4 border-l-apwaccent flex items-center gap-4 p-4 flex-wrap">
+                <div class="flex-1 min-w-[150px]">
+                    <div class="font-display">@secret.KeyName</div>
+                    <div class="text-sm text-apwmuted">@secret.SourceName &middot; @secret.KeyValue.Substring(0, Math.Min(8, secret.KeyValue.Length))****</div>
                 </div>
                 <form asp-action="DeleteSecret" method="post">
                     <input type="hidden" name="id" value="@secret.Id" />
-                    <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+                    <button type="submit" class="apw-btn-danger">Eliminar</button>
                 </form>
             </div>
         }
     </div>
 
-    <div class="apw-import-card">
-        <h5 class="mb-3">Agregar Secret</h5>
+    <div class="apw-card p-6 max-w-lg">
+        <h5 class="font-display text-lg mb-4">Agregar Secret</h5>
         <form asp-action="CreateSecret" method="post">
-            <div class="mb-3">
-                <label class="form-label">Fuente (opcional, dejar vacio para Global)</label>
-                <select name="sourceId" class="form-select">
+            <div class="mb-4">
+                <label class="apw-label">Fuente (opcional, dejar vacio para Global)</label>
+                <select name="sourceId" class="apw-input">
                     <option value="">-- Global --</option>
                     @foreach (var source in Model.Sources)
                     {
@@ -77,15 +75,15 @@
                     }
                 </select>
             </div>
-            <div class="mb-3">
-                <label class="form-label">Nombre de la Key</label>
-                <input type="text" name="keyName" class="form-control" placeholder="ApiKey" required />
+            <div class="mb-4">
+                <label class="apw-label">Nombre de la Key</label>
+                <input type="text" name="keyName" class="apw-input" placeholder="ApiKey" required />
             </div>
-            <div class="mb-3">
-                <label class="form-label">Valor</label>
-                <input type="text" name="keyValue" class="form-control" required />
+            <div class="mb-4">
+                <label class="apw-label">Valor</label>
+                <input type="text" name="keyValue" class="apw-input" required />
             </div>
-            <button type="submit" class="btn btn-apw-primary w-100">Guardar Secret</button>
+            <button type="submit" class="apw-btn-primary w-full">Guardar Secret</button>
         </form>
     </div>
 </div>

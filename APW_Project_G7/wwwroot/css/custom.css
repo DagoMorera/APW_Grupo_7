@@ -480,3 +480,25 @@ a {
     border-radius: 6px;
     margin-bottom: 14px;
 }
+/* Distincion visual Inicio (global) vs Mi Feed (personal) */
+.apw-feed-kind {
+    display: inline-block;
+    background-color: var(--apw-surface-alt);
+    color: var(--apw-accent);
+    font-size: 0.8rem;
+    padding: 3px 12px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+}
+
+.apw-feed-kind-personal {
+    color: #f2c94c;
+}
+
+.apw-rss-link {
+    background-color: var(--apw-surface-alt);
+    color: var(--apw-accent);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}

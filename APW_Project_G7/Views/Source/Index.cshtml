@@ -3,44 +3,42 @@
     ViewData["Title"] = "Fuentes";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4 apw-hero">
+<div class="flex justify-between items-center flex-wrap gap-3 mb-6" data-aos="fade-up">
     <div>
-        <h2>Registro de Fuentes</h2>
-        <p class="text-muted mb-0">Las fuentes configuradas para la ingesta de contenido</p>
+        <h2 class="font-display text-2xl">Registro de Fuentes</h2>
+        <p class="text-apwmuted">Las fuentes configuradas para la ingesta de contenido</p>
     </div>
-    <a asp-action="Create" class="btn btn-apw-primary">+ Agregar Fuente</a>
+    <a asp-action="Create" class="apw-btn-primary">+ Agregar Fuente</a>
 </div>
 
 @if (!Model.Any())
 {
-    <div class="alert alert-info">Aun no hay fuentes registradas.</div>
+    <div class="apw-card p-6 text-center">Aun no hay fuentes registradas.</div>
 }
 else
 {
-    <div class="apw-source-list">
+    <div class="flex flex-col gap-3">
         @foreach (var source in Model)
         {
-            <div class="apw-source-row">
-                <div class="apw-source-main">
-                    <div class="apw-source-name">
+            <div class="apw-card border-l-4 border-l-apwaccent flex items-center gap-4 p-4" data-aos="fade-right">
+                <div class="flex-1 min-w-0">
+                    <div class="font-display text-base">
                         @source.Name
                         @if (source.RequiresSecret)
                         {
-                            <span class="apw-lock-icon" title="Requiere Secret">&#128274;</span>
+                            <span class="text-xs ml-1" title="Requiere Secret">&#128274;</span>
                         }
                     </div>
-                    <div class="apw-source-url">@source.Url</div>
+                    <div class="text-sm text-apwmuted truncate">@source.Url</div>
                     @if (!string.IsNullOrWhiteSpace(source.Description))
                     {
-                        <div class="apw-source-desc">@source.Description</div>
+                        <div class="text-sm text-apwmuted italic">@source.Description</div>
                     }
                 </div>
-                <div class="apw-source-meta">
-                    <span class="badge bg-info text-dark">@source.ComponentType</span>
-                </div>
-                <div class="apw-source-actions">
-                    <a asp-action="Edit" asp-route-id="@source.Id" class="btn btn-sm btn-apw-outline">Editar</a>
-                    <a asp-action="Delete" asp-route-id="@source.Id" class="btn btn-sm btn-outline-danger">Eliminar</a>
+                <span class="apw-badge">@source.ComponentType</span>
+                <div class="flex gap-2 flex-shrink-0">
+                    <a asp-action="Edit" asp-route-id="@source.Id" class="apw-btn-outline">Editar</a>
+                    <a asp-action="Delete" asp-route-id="@source.Id" class="apw-btn-danger">Eliminar</a>
                 </div>
             </div>
         }

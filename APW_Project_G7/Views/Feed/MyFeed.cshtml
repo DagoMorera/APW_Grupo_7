@@ -1,90 +1,63 @@
 @model List<APW.Mvc.Models.FeedEntryViewModel>
 @{
     ViewData["Title"] = "Mi Feed";
-    var personalFeedUrl = ViewBag.PersonalFeedUrl as string ?? string.Empty;
     var hasSubscriptions = ViewBag.HasSubscriptions as bool? ?? false;
     var returnUrl = Context.Request.Path + Context.Request.QueryString;
 }
 
-<h2>Mi Feed Personal</h2>
-<p class="text-muted">
-    Aquí puedes ver el contenido al que estas suscrito
-</p>
-
+<div class="mb-8 border-b-4 border-yellow-400 pb-4" data-aos="fade-up">
+    <span class="apw-badge mb-2 text-yellow-300">&#11088; Feed Personal</span>
+    <h1 class="font-display text-3xl md:text-4xl font-semibold mt-2">Solo tus fuentes favoritas</h1>
+    <p class="text-apwmuted mt-2">El contenido de las fuentes a las que estas suscrito.</p>
+</div>
 
 @if (!hasSubscriptions)
 {
-    <div class="alert alert-info">
-        Todavia no estas suscrito a ninguna fuente. <a asp-controller="Explore" asp-action="Index">Explora las fuentes disponibles</a> y suscribete a las que te interesen.
+    <div class="apw-card p-6 text-center" data-aos="fade-up">
+        <p>Todavia no estas suscrito a ninguna fuente.</p>
+        <a asp-controller="Explore" asp-action="Index" class="text-apwaccent hover:underline">Explora las fuentes disponibles</a> y suscribete a las que te interesen.
     </div>
 }
 else if (!Model.Any())
 {
-    <div class="alert alert-info">
+    <div class="apw-card p-6 text-center" data-aos="fade-up">
         Estas suscrito, pero tus fuentes todavia no tienen items guardados.
     </div>
 }
 else
 {
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         @foreach (var entry in Model)
         {
-            <div class="col">
-                <div class="card h-100 apw-feed-card">
-                    @if (!string.IsNullOrWhiteSpace(entry.ImageUrl))
-                    {
-                        <img src="@entry.ImageUrl" class="card-img-top" alt="@entry.Title"
-                             style="height: 180px; object-fit: cover;"
-                             onerror="this.style.display='none';" />
-                    }
-                    <div class="card-body d-flex flex-column">
-                        <span class="badge apw-badge-source align-self-start mb-2">@entry.SourceName</span>
-
-                        <h5 class="card-title">@entry.Title</h5>
-
-                        <p class="card-text small"
-                           style="display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden;">
-                            @entry.Description
-                        </p>
-
-                        <div class="mt-auto">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <small class="text-muted">@entry.CreatedAt.ToLocalTime().ToString("dd MMM yyyy, HH:mm")</small>
-                                <a href="@entry.Link" target="_blank" rel="noopener" class="btn btn-sm btn-apw-outline">Ver original &#8599;</a>
-                            </div>
-
-                            @if (!string.IsNullOrWhiteSpace(entry.RawJson))
-                            {
-                                <details class="apw-json-details mb-2">
-                                    <summary>Ver JSON completo</summary>
-                                    <pre class="apw-json-block">@entry.RawJson</pre>
-                                </details>
-                            }
-
-                            <form asp-controller="Subscription" asp-action="Toggle" method="post">
-                                <input type="hidden" name="sourceId" value="@entry.SourceId" />
-                                <input type="hidden" name="returnUrl" value="@returnUrl" />
-                                <button type="submit" class="btn btn-sm btn-outline-danger w-100">
-                                    Desuscribirse de @entry.SourceName
-                                </button>
-                            </form>
+            <div class="apw-card flex flex-col overflow-hidden" data-aos="fade-up">
+                @if (!string.IsNullOrWhiteSpace(entry.ImageUrl))
+                {
+                    <img src="@entry.ImageUrl" alt="@entry.Title" class="w-full h-44 object-cover" onerror="this.style.display='none';" />
+                }
+                <div class="p-4 flex flex-col flex-1">
+                    <span class="apw-badge self-start mb-2">@entry.SourceName</span>
+                    <h5 class="font-display text-lg mb-2">@entry.Title</h5>
+                    <p class="text-sm text-apwmuted mb-3 line-clamp-4">@entry.Description</p>
+                    <div class="mt-auto">
+                        <div class="flex justify-between items-center mb-2">
+                            <small class="text-apwmuted">@entry.CreatedAt.ToLocalTime().ToString("dd MMM yyyy, HH:mm")</small>
+                            <a href="@entry.Link" target="_blank" rel="noopener" class="apw-btn-outline text-xs">Ver original &#8599;</a>
                         </div>
+                        @if (!string.IsNullOrWhiteSpace(entry.RawJson))
+                        {
+                            <details class="text-xs mb-2">
+                                <summary class="cursor-pointer text-apwmuted">Ver JSON completo</summary>
+                                <pre class="bg-black text-green-300 text-xs p-3 mt-2 max-h-52 overflow-auto rounded whitespace-pre-wrap break-words">@entry.RawJson</pre>
+                            </details>
+                        }
+                        <form asp-controller="Subscription" asp-action="Toggle" method="post">
+                            <input type="hidden" name="sourceId" value="@entry.SourceId" />
+                            <input type="hidden" name="returnUrl" value="@returnUrl" />
+                            <button type="submit" class="apw-btn-danger w-full">Desuscribirse de @entry.SourceName</button>
+                        </form>
                     </div>
                 </div>
             </div>
         }
     </div>
-}
-
-@section Scripts {
-    <style>
-        .apw-feed-card { background-color: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .apw-badge-source { background-color: rgba(45, 212, 191, 0.15); color: #2dd4bf; font-weight: 500; }
-        .apw-json-details summary { cursor: pointer; color: #9ca3af; font-size: 0.85rem; }
-        .apw-json-block {
-            background-color: #000; color: #6ee7b7; font-size: 0.75rem; padding: 0.75rem;
-            margin-top: 0.5rem; max-height: 220px; overflow: auto; white-space: pre-wrap;
-            word-break: break-word; border-radius: 4px;
-        }
-    </style>
 }

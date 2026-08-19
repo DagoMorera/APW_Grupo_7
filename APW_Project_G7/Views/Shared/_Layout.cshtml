@@ -4,93 +4,99 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - APW</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=EB+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS via Play CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            apwbg: '#0b1213',
+                            apwbgheader: '#0e1718',
+                            apwsurface: '#131e1f',
+                            apwsurfacealt: '#1c2b2c',
+                            apwborder: '#1c2b2c',
+                            apwborderstrong: '#2a3b3a',
+                            apwtext: '#f2f2f0',
+                            apwmuted: '#8fa3a1',
+                            apwaccent: '#4fd1ae',
+                            apwaccentdark: '#0a2e24',
+                        },
+                        fontFamily: {
+                            display: ['Cinzel', 'serif'],
+                            body: ['EB Garamond', 'serif'],
+                        }
+                    }
+                }
+            }
+    </script>
+
+    <!-- AOS - Animate On Scroll -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
-    <link rel="alternate" type="application/rss+xml" title="APW - Feed de contenido guardado" href="/feed.xml" />
 </head>
-<body class="apw-body">
-    <div class="apw-page-wrapper">
-        <header>
-            <nav class="navbar navbar-expand-sm navbar-dark apw-navbar mb-4">
-                <div class="container-fluid">
-                    <a class="navbar-brand apw-brand" asp-controller="Home" asp-action="Index">
-                        <span class="apw-brand-mark">&#9670;</span> APW
-                    </a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                        <ul class="navbar-nav flex-grow-1">
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Home" asp-action="Index">Inicio</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Explore" asp-action="Index">Explorar</a>
-                            </li>
-                            @if (User.Identity != null && User.Identity.IsAuthenticated)
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="Feed" asp-action="MyFeed">Mi Feed</a>
-                                </li>
-                            }
-                            @if (User.IsInRole("Admin"))
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="Source" asp-action="Index">Fuentes</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="Import" asp-action="Index">Importar</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="Settings" asp-action="Index">Configuracion</a>
-                                </li>
-                            }
-                        </ul>
-                        <ul class="navbar-nav align-items-center">
-                            @if (User.Identity != null && User.Identity.IsAuthenticated)
-                            {
-                                <li class="nav-item d-flex align-items-center me-3">
-                                    <span class="apw-username">@User.Identity.Name</span>
-                                    <span class="badge badge-role ms-2">@User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value</span>
-                                </li>
-                                <li class="nav-item">
-                                    <form asp-controller="Account" asp-action="Logout" method="post">
-                                        <button type="submit" class="btn btn-sm btn-apw-outline">Cerrar Sesion</button>
-                                    </form>
-                                </li>
-                            }
-                            else
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="Account" asp-action="Login">Iniciar Sesion</a>
-                                </li>
-                            }
-                        </ul>
-                    </div>
-                </div>
-            </nav>
-        </header>
+<body class="bg-apwbg text-apwtext font-body min-h-screen flex flex-col">
 
-        <div class="container apw-main">
-            <main role="main" class="pb-3">
-                @RenderBody()
-            </main>
-        </div>
+    <header class="bg-apwbgheader border-b-2 border-apwaccent shadow-lg sticky top-0 z-50">
+        <nav class="container mx-auto px-4 py-3 flex items-center justify-between flex-wrap gap-3">
+            <a asp-controller="Home" asp-action="Index" class="font-display text-apwaccent text-xl font-semibold flex items-center gap-2">
+                <span>&#9670;</span> APW
+            </a>
 
-        <footer class="apw-footer text-center">
-            <div class="container">
-                &copy; @DateTime.Now.Year - APW_Project_G7
+            <div class="flex items-center gap-1 flex-wrap">
+                <a asp-controller="Home" asp-action="Index" class="apw-nav-link">Inicio</a>
+                <a asp-controller="Explore" asp-action="Index" class="apw-nav-link">Explorar</a>
+                @if (User.Identity != null && User.Identity.IsAuthenticated)
+                {
+                    <a asp-controller="Feed" asp-action="MyFeed" class="apw-nav-link">Mi Feed</a>
+                }
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-controller="Source" asp-action="Index" class="apw-nav-link">Fuentes</a>
+                    <a asp-controller="Import" asp-action="Index" class="apw-nav-link">Importar</a>
+                    <a asp-controller="Settings" asp-action="Index" class="apw-nav-link">Configuracion</a>
+                }
             </div>
-        </footer>
-    </div>
+
+            <div class="flex items-center gap-3">
+                @if (User.Identity != null && User.Identity.IsAuthenticated)
+                {
+                    <span class="font-display text-sm">@User.Identity.Name</span>
+                    <span class="bg-apwaccent text-apwaccentdark text-xs font-semibold px-2 py-1 rounded">
+                        @User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value
+                    </span>
+                    <form asp-controller="Account" asp-action="Logout" method="post">
+                        <button type="submit" class="apw-btn-outline text-sm">Cerrar Sesion</button>
+                    </form>
+                }
+                else
+                {
+                    <a asp-controller="Account" asp-action="Login" class="apw-nav-link">Iniciar Sesion</a>
+                }
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-4 py-6 flex-1 w-full">
+        @RenderBody()
+    </main>
+
+    <footer class="bg-apwbgheader border-t-2 border-apwaccent text-apwmuted font-display text-xs tracking-wide text-center py-5 mt-auto">
+        &copy; @DateTime.Now.Year - APW_Project_G7
+    </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script>
+            AOS.init({ duration: 600, once: true });
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

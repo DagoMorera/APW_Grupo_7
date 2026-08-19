@@ -1,8 +1,8 @@
 ﻿using System.Security.Claims;
-using APW.Mvc.Models;
-using APW.Mvc.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using APW.Mvc.Models;
+using APW.Mvc.Service;
 
 namespace APW.Mvc.Controllers;
 
@@ -49,6 +49,7 @@ public class ExploreController : Controller
             });
         }
 
+        ViewBag.SubscribedSourceIds = await GetSubscribedSourceIdsAsync();
         return View(cards);
     }
 

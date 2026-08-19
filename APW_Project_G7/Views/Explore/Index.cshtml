@@ -1,37 +1,60 @@
 ﻿@model IEnumerable<ExploreSourceCardViewModel>
 @{
     ViewData["Title"] = "Explorar Fuentes";
+    var subscribedIds = ViewBag.SubscribedSourceIds as HashSet<int> ?? new HashSet<int>();
+    var returnUrl = Context.Request.Path + Context.Request.QueryString;
 }
 
-<div class="apw-hero mb-4">
-    <h1 class="display-6">Explorar Fuentes</h1>
-    <p class="text-muted">Descubre el contenido disponible en cada fuente configurada</p>
+<div class="mb-8" data-aos="fade-up">
+    <h1 class="font-display text-3xl md:text-4xl font-semibold">Explorar Fuentes</h1>
+    <p class="text-apwmuted mt-2">Descubre el contenido disponible en cada fuente configurada</p>
 </div>
 
 @if (!Model.Any())
 {
-    <div class="alert alert-info">No hay fuentes configuradas todavia.</div>
+    <div class="apw-card p-6 text-center" data-aos="fade-up">No hay fuentes configuradas todavia.</div>
 }
 else
 {
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         @foreach (var source in Model)
         {
-            <div class="col">
-                <div class="apw-explore-card">
-                    @if (!string.IsNullOrWhiteSpace(source.PreviewImageUrl))
+            var isSubscribed = subscribedIds.Contains(source.Id);
+
+            <div class="apw-card p-5 flex flex-col items-center text-center" data-aos="zoom-in">
+                @if (!string.IsNullOrWhiteSpace(source.PreviewImageUrl))
+                {
+                    <img src="@source.PreviewImageUrl" alt="@source.Name" class="w-full h-28 object-cover rounded-lg mb-4" onerror="this.style.display='none';" />
+                }
+                else
+                {
+                    <div class="w-12 h-12 rounded-full border border-apwaccent text-apwaccent flex items-center justify-center text-xl mb-4">&#9670;</div>
+                }
+                <h5 class="font-display text-lg mb-1">@source.Name</h5>
+                <span class="apw-badge mb-3">@source.ComponentType</span>
+                <p class="text-sm text-apwmuted flex-1 mb-4">@source.Description</p>
+
+                <div class="flex gap-2 w-full">
+                    <a asp-action="Details" asp-route-id="@source.Id" class="apw-btn-primary flex-1">Explorar</a>
+                    @if (User.Identity != null && User.Identity.IsAuthenticated)
                     {
-                        <img src="@source.PreviewImageUrl" class="apw-explore-preview-img" alt="@source.Name"
-                             onerror="this.style.display='none';" />
+                        <form asp-controller="Subscription" asp-action="Toggle" method="post">
+                            <input type="hidden" name="sourceId" value="@source.Id" />
+                            <input type="hidden" name="returnUrl" value="@returnUrl" />
+                            @if (isSubscribed)
+                            {
+                                <button type="submit" class="apw-btn-danger" title="Desuscribirse">&#10003;</button>
+                            }
+                            else
+                            {
+                                <button type="submit" class="apw-btn-outline" title="Suscribirse">+</button>
+                            }
+                        </form>
                     }
                     else
                     {
-                        <div class="apw-explore-seal">&#9670;</div>
+                        <a asp-controller="Account" asp-action="Login" class="apw-btn-outline" title="Suscribirse">+</a>
                     }
-                    <h5 class="apw-explore-title">@source.Name</h5>
-                    <span class="apw-explore-type">@source.ComponentType</span>
-                    <p class="apw-explore-desc">@source.Description</p>
-                    <a asp-action="Details" asp-route-id="@source.Id" class="btn btn-apw-primary w-100 mt-auto">Explorar</a>
                 </div>
             </div>
         }

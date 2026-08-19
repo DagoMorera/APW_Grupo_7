@@ -1,53 +1,26 @@
 ﻿@model SourceViewModel
 @{
     ViewData["Title"] = "Eliminar Fuente";
-    var itemCount = ViewBag.ItemCount as int? ?? 0;
-
-    var confirmMessage = itemCount > 0
-        ? $"Esta accion no se puede deshacer. ¿Confirmas eliminar '{Model.Name}' y sus {itemCount} item(s) guardado(s)?"
-        : $"Esta accion no se puede deshacer. ¿Confirmas eliminar '{Model.Name}'?";
 }
 
-<h2>Eliminar Fuente</h2>
+<h2 class="font-display text-2xl mb-6" data-aos="fade-up">Eliminar Fuente</h2>
 
-<div class="alert alert-warning">
-    ¿Estas seguro que deseas eliminar esta fuente?
-    @if (itemCount > 0)
-    {
-        <br />
-        <strong>Esta fuente tiene @itemCount item(s) guardado(s). Al eliminarla, tambien se eliminaran de forma permanente.</strong>
-    }
+<div class="bg-yellow-900/30 border border-yellow-600 text-yellow-300 rounded-lg p-3 mb-4 max-w-xl" data-aos="fade-up">
+    &#191;Estas seguro que deseas eliminar esta fuente?
 </div>
 
-<dl class="row">
-    <dt class="col-sm-2">Nombre</dt>
-    <dd class="col-sm-10">@Model.Name</dd>
+<div class="apw-card p-6 max-w-xl mb-4" data-aos="fade-up">
+    <dl class="grid grid-cols-3 gap-2 text-sm">
+        <dt class="text-apwmuted col-span-1">Nombre</dt>
+        <dd class="col-span-2">@Model.Name</dd>
+        <dt class="text-apwmuted col-span-1">Url</dt>
+        <dd class="col-span-2 truncate">@Model.Url</dd>
+        <dt class="text-apwmuted col-span-1">Tipo</dt>
+        <dd class="col-span-2">@Model.ComponentType</dd>
+    </dl>
+</div>
 
-    <dt class="col-sm-2">Url</dt>
-    <dd class="col-sm-10">@Model.Url</dd>
-
-    <dt class="col-sm-2">Tipo</dt>
-    <dd class="col-sm-10">@Model.ComponentType</dd>
-
-    @if (itemCount > 0)
-    {
-        <dt class="col-sm-2">Items guardados</dt>
-        <dd class="col-sm-10 text-warning">@itemCount</dd>
-    }
-</dl>
-
-<form asp-action="Delete" asp-route-id="@Model.Id" method="post" id="deleteSourceForm" data-confirm="@confirmMessage">
-    <button type="submit" class="btn btn-danger">Eliminar</button>
-    <a asp-action="Index" class="btn btn-outline-secondary">Cancelar</a>
+<form asp-action="Delete" asp-route-id="@Model.Id" method="post" class="flex gap-2">
+    <button type="submit" class="apw-btn-danger">Eliminar</button>
+    <a asp-action="Index" class="apw-btn-outline">Cancelar</a>
 </form>
-
-@section Scripts {
-    <script>
-        document.getElementById('deleteSourceForm').addEventListener('submit', function (e) {
-            var message = this.dataset.confirm;
-            if (!confirm(message)) {
-                e.preventDefault();
-            }
-        });
-    </script>
-}

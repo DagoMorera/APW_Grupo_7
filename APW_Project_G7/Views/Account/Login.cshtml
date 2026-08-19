@@ -3,35 +3,31 @@
     ViewData["Title"] = "Iniciar Sesion";
 }
 
-<div class="row justify-content-center mt-5">
-    <div class="col-md-5">
-        <div class="card shadow-sm">
-            <div class="card-body p-4">
-                <h3 class="text-center mb-4">Iniciar Sesion</h3>
+<div class="flex justify-center mt-10">
+    <div class="apw-card p-8 w-full max-w-md" data-aos="zoom-in">
+        <h3 class="font-display text-2xl text-center mb-6">Iniciar Sesion</h3>
 
-                <form asp-controller="Account" asp-action="Login" method="post">
-                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+        <form asp-controller="Account" asp-action="Login" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-red-400 mb-3"></div>
 
-                    <div class="mb-3">
-                        <label asp-for="Username" class="form-label">Usuario</label>
-                        <input asp-for="Username" class="form-control" autofocus />
-                        <span asp-validation-for="Username" class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="Password" class="form-label">Password</label>
-                        <input asp-for="Password" class="form-control" />
-                        <span asp-validation-for="Password" class="text-danger"></span>
-                    </div>
-
-                    <button type="submit" class="btn btn-apw-primary w-100">Ingresar</button>
-                </form>
-
-                <p class="text-center mt-3 mb-0">
-                    &#191;No tienes cuenta? <a asp-controller="Account" asp-action="Register">Registrate aqui</a>
-                </p>
+            <div class="mb-4">
+                <label asp-for="Username" class="apw-label">Usuario</label>
+                <input asp-for="Username" class="apw-input" autofocus />
+                <span asp-validation-for="Username" class="text-red-400 text-sm"></span>
             </div>
-        </div>
+
+            <div class="mb-6">
+                <label asp-for="Password" class="apw-label">Password</label>
+                <input asp-for="Password" class="apw-input" />
+                <span asp-validation-for="Password" class="text-red-400 text-sm"></span>
+            </div>
+
+            <button type="submit" class="apw-btn-primary w-full">Ingresar</button>
+        </form>
+
+        <p class="text-center mt-4">
+            &#191;No tienes cuenta? <a asp-controller="Account" asp-action="Register" class="text-apwaccent hover:underline">Registrate aqui</a>
+        </p>
     </div>
 </div>
 

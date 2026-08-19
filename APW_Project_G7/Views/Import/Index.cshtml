@@ -2,27 +2,27 @@
     ViewData["Title"] = "Importar Item";
 }
 
-<div class="apw-hero mb-4">
-    <h1 class="display-6">Importar Item</h1>
-    <p class="text-muted">Sube un archivo JSON exportado (de esta app o de otro grupo) para cargarlo en la base de datos</p>
+<div class="mb-6" data-aos="fade-up">
+    <h1 class="font-display text-3xl">Importar Item</h1>
+    <p class="text-apwmuted mt-2">Sube un archivo JSON exportado (de esta app o de otro grupo) para cargarlo en la base de datos</p>
 </div>
 
 @if (TempData["Mensaje"] is not null)
 {
-    <div class="alert alert-success">@TempData["Mensaje"]</div>
+    <div class="bg-green-900/30 border border-apwaccent text-apwaccent rounded-lg p-3 mb-4 max-w-lg">@TempData["Mensaje"]</div>
 }
 
-<div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+<div asp-validation-summary="ModelOnly" class="text-red-400 mb-3"></div>
 
-<div class="apw-import-card mx-auto">
+<div class="apw-card p-6 max-w-lg" data-aos="fade-up">
     <form asp-action="Index" method="post" enctype="multipart/form-data">
-        <label for="jsonFile" class="apw-dropzone" id="apwDropzone">
-            <div class="apw-dropzone-icon">&#128220;</div>
-            <div class="apw-dropzone-text">Arrastra tu archivo aqui, o haz clic para seleccionar</div>
-            <div class="apw-dropzone-filename" id="apwFileName">Ningun archivo seleccionado</div>
-            <input type="file" id="jsonFile" name="jsonFile" accept=".json" class="apw-dropzone-input" required />
+        <label for="jsonFile" id="apwDropzone" class="flex flex-col items-center justify-center text-center border-2 border-dashed border-apwborderstrong rounded-lg py-10 px-5 cursor-pointer transition hover:border-apwaccent hover:bg-apwsurfacealt">
+            <div class="text-4xl mb-3">&#128220;</div>
+            <div class="text-sm mb-2">Arrastra tu archivo aqui, o haz clic para seleccionar</div>
+            <div class="text-xs text-apwaccent italic" id="apwFileName">Ningun archivo seleccionado</div>
+            <input type="file" id="jsonFile" name="jsonFile" accept=".json" class="hidden" required />
         </label>
-        <button type="submit" class="btn btn-apw-primary w-100 mt-3">Importar</button>
+        <button type="submit" class="apw-btn-primary w-full mt-4">Importar</button>
     </form>
 </div>
 
@@ -40,10 +40,10 @@
             dropzone.addEventListener(evt, e => e.preventDefault());
         });
 
-        dropzone.addEventListener('dragover', () => dropzone.classList.add('apw-dropzone-active'));
-        dropzone.addEventListener('dragleave', () => dropzone.classList.remove('apw-dropzone-active'));
+        dropzone.addEventListener('dragover', () => dropzone.classList.add('border-apwaccent'));
+        dropzone.addEventListener('dragleave', () => dropzone.classList.remove('border-apwaccent'));
         dropzone.addEventListener('drop', (e) => {
-            dropzone.classList.remove('apw-dropzone-active');
+            dropzone.classList.remove('border-apwaccent');
             if (e.dataTransfer.files.length > 0) {
                 input.files = e.dataTransfer.files;
                 fileName.textContent = e.dataTransfer.files[0].name;

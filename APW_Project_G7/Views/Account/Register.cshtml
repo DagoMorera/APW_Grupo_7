@@ -3,45 +3,40 @@
     ViewData["Title"] = "Crear Cuenta";
 }
 
-<div class="row justify-content-center mt-5">
-    <div class="col-md-5">
-        <div class="apw-import-card">
-            <h3 class="text-center mb-4">Crear Cuenta</h3>
+<div class="flex justify-center mt-10">
+    <div class="apw-card p-8 w-full max-w-md" data-aos="zoom-in">
+        <h3 class="font-display text-2xl text-center mb-6">Crear Cuenta</h3>
 
-            <form asp-controller="Account" asp-action="Register" method="post">
-                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+        <form asp-controller="Account" asp-action="Register" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-red-400 mb-3"></div>
 
-                <div class="mb-3">
-                    <label asp-for="Username" class="form-label">Usuario</label>
-                    <input asp-for="Username" class="form-control" autofocus />
-                    <span asp-validation-for="Username" class="text-danger"></span>
-                </div>
+            <div class="mb-4">
+                <label asp-for="Username" class="apw-label">Usuario</label>
+                <input asp-for="Username" class="apw-input" autofocus />
+                <span asp-validation-for="Username" class="text-red-400 text-sm"></span>
+            </div>
+            <div class="mb-4">
+                <label asp-for="Email" class="apw-label">Correo</label>
+                <input asp-for="Email" class="apw-input" />
+                <span asp-validation-for="Email" class="text-red-400 text-sm"></span>
+            </div>
+            <div class="mb-4">
+                <label asp-for="Password" class="apw-label">Password</label>
+                <input asp-for="Password" class="apw-input" />
+                <span asp-validation-for="Password" class="text-red-400 text-sm"></span>
+            </div>
+            <div class="mb-6">
+                <label asp-for="ConfirmPassword" class="apw-label">Confirmar Password</label>
+                <input asp-for="ConfirmPassword" class="apw-input" />
+                <span asp-validation-for="ConfirmPassword" class="text-red-400 text-sm"></span>
+            </div>
 
-                <div class="mb-3">
-                    <label asp-for="Email" class="form-label">Correo</label>
-                    <input asp-for="Email" class="form-control" />
-                    <span asp-validation-for="Email" class="text-danger"></span>
-                </div>
+            <button type="submit" class="apw-btn-primary w-full">Crear Cuenta</button>
+        </form>
 
-                <div class="mb-3">
-                    <label asp-for="Password" class="form-label">Password</label>
-                    <input asp-for="Password" class="form-control" />
-                    <span asp-validation-for="Password" class="text-danger"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="ConfirmPassword" class="form-label">Confirmar Password</label>
-                    <input asp-for="ConfirmPassword" class="form-control" />
-                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-                </div>
-
-                <button type="submit" class="btn btn-apw-primary w-100">Crear Cuenta</button>
-            </form>
-
-            <p class="text-center mt-3 mb-0">
-                <a asp-controller="Account" asp-action="Login">Ya tengo cuenta, iniciar sesion</a>
-            </p>
-        </div>
+        <p class="text-center mt-4">
+            Ya tengo cuenta, <a asp-controller="Account" asp-action="Login" class="text-apwaccent hover:underline">iniciar sesion</a>
+        </p>
     </div>
 </div>
 
