@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using APW.Mvc.Models;
 using APW.Mvc.Service;
@@ -11,17 +12,20 @@ public class HomeController : Controller
     private readonly ISourceItemService _sourceItemService;
     private readonly ISourceService _sourceService;
     private readonly IFeedEntryProvider _feedEntryProvider;
+    private readonly ISubscriptionService _subscriptionService;
 
     public HomeController(
         ILogger<HomeController> logger,
         ISourceItemService sourceItemService,
         ISourceService sourceService,
-        IFeedEntryProvider feedEntryProvider)
+        IFeedEntryProvider feedEntryProvider,
+        ISubscriptionService subscriptionService)
     {
         _logger = logger;
         _sourceItemService = sourceItemService;
         _sourceService = sourceService;
         _feedEntryProvider = feedEntryProvider;
+        _subscriptionService = subscriptionService;
     }
 
     // Home es el feed global
@@ -29,6 +33,8 @@ public class HomeController : Controller
     {
         var baseUrl = $"{Request.Scheme}://{Request.Host}";
         var entries = await _feedEntryProvider.GetEntriesAsync(baseUrl);
+
+        ViewBag.SubscribedSourceIds = await GetSubscribedSourceIdsAsync();
         return View(entries);
     }
 
@@ -50,7 +56,7 @@ public class HomeController : Controller
             Description = parsed.Description,
             ImageUrl = parsed.ImageUrl,
             Url = parsed.Link,
-            PublishedAt = item.CreatedAt.ToString("o"), // formato ISO 8601
+            PublishedAt = item.CreatedAt.ToString("o"),
             SourceName = source.Name,
             SourceUrl = source.Url,
             SourceDescription = source.Description,
@@ -72,5 +78,17 @@ public class HomeController : Controller
     public IActionResult Error()
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+    }
+
+    // Trae los ids de las Sources a las que el usuario actual esta suscrito
+    private async Task<HashSet<int>> GetSubscribedSourceIdsAsync()
+    {
+        if (User.Identity is not { IsAuthenticated: true }) return new HashSet<int>();
+
+        var claim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (!int.TryParse(claim, out var userId)) return new HashSet<int>();
+
+        var ids = await _subscriptionService.GetSubscribedSourceIdsAsync(userId);
+        return ids.ToHashSet();
     }
 }

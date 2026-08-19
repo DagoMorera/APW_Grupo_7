@@ -1,6 +1,8 @@
 ﻿@model List<APW.Mvc.Models.FeedEntryViewModel>
 @{
     ViewData["Title"] = "Inicio";
+    var subscribedIds = ViewBag.SubscribedSourceIds as HashSet<int> ?? new HashSet<int>();
+    var returnUrl = Context.Request.Path + Context.Request.QueryString;
 }
 
 <div class="mb-8 border-b-4 border-apwaccent pb-4" data-aos="fade-up">
@@ -24,13 +26,32 @@ else
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         @foreach (var entry in Model)
         {
+            var isSubscribed = subscribedIds.Contains(entry.SourceId);
+
             <div class="apw-card flex flex-col overflow-hidden" data-aos="fade-up">
                 @if (!string.IsNullOrWhiteSpace(entry.ImageUrl))
                 {
                     <img src="@entry.ImageUrl" alt="@entry.Title" class="w-full h-44 object-cover" onerror="this.style.display='none';" />
                 }
                 <div class="p-4 flex flex-col flex-1">
-                    <span class="apw-badge self-start mb-2">@entry.SourceName</span>
+                    <div class="flex justify-between items-start gap-2 mb-2">
+                        <span class="apw-badge">@entry.SourceName</span>
+                        @if (User.Identity != null && User.Identity.IsAuthenticated)
+                        {
+                            <form asp-controller="Subscription" asp-action="Toggle" method="post">
+                                <input type="hidden" name="sourceId" value="@entry.SourceId" />
+                                <input type="hidden" name="returnUrl" value="@returnUrl" />
+                                @if (isSubscribed)
+                                {
+                                    <button type="submit" class="apw-btn-danger text-xs" title="Desuscribirse de @entry.SourceName">&#10003; Suscrito</button>
+                                }
+                                else
+                                {
+                                    <button type="submit" class="apw-btn-outline text-xs" title="Suscribirse a @entry.SourceName">+ Suscribirse</button>
+                                }
+                            </form>
+                        }
+                    </div>
                     <h5 class="font-display text-lg mb-2">@entry.Title</h5>
                     <p class="text-sm text-apwmuted mb-3 line-clamp-4">@entry.Description</p>
                     <div class="mt-auto">
